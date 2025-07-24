@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FusionFry - Science and Technology Blog</title>
+    <meta name="description" content="Explore cutting-edge science and technology insights at FusionFry. Get the latest trends in AI, biotechnology, quantum computing, and scientific discoveries.">
+    <meta name="keywords" content="science blog, technology news, artificial intelligence, biotechnology, quantum computing, scientific research, tech trends, innovation, peer review, STEM">
+    <meta name="author" content="FusionFry Team">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="theme-color" content="#2563eb">
+    
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="FusionFry">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta name="twitter:site" content="@FusionFry">
+    <meta name="twitter:creator" content="@FusionFry">
+    
+    <!-- Preconnect to improve font loading performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style">
+    
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//images.pexels.com">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    
+    <style>
+      body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+      }
+      
+      /* Accessibility improvements */
+      *:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+      }
+      
+      /* Skip to main content link */
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 6px;
+        background: #2563eb;
+        color: white;
+        padding: 8px;
+        text-decoration: none;
+        border-radius: 4px;
+        z-index: 1000;
+      }
+      
+      .skip-link:focus {
+        top: 6px;
+      }
+      
+      .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      
+      .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      
+      .prose {
+        color: #374151;
+        line-height: 1.75;
+      }
+      
+      .dark .prose {
+        color: #d1d5db;
+      }
+      
+      .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+        color: #111827;
+        font-weight: 600;
+        margin-top: 2em;
+        margin-bottom: 1em;
+        line-height: 1.25;
+      }
+      
+      .dark .prose h1, .dark .prose h2, .dark .prose h3, .dark .prose h4, .dark .prose h5, .dark .prose h6 {
+        color: #f9fafb;
+      }
+      
+      .prose h1 { font-size: 2.25em; }
+      .prose h2 { font-size: 1.875em; }
+      .prose h3 { font-size: 1.5em; }
+      .prose h4 { font-size: 1.25em; }
+      
+      .prose p { margin-bottom: 1.25em; }
+      .prose strong { font-weight: 600; }
+      .prose em { font-style: italic; }
+      
+      .prose ul, .prose ol {
+        margin: 1.25em 0;
+        padding-left: 1.625em;
+      }
+      
+      .prose li { margin: 0.5em 0; }
+      
+      .prose blockquote {
+        border-left: 4px solid #e5e7eb;
+        padding-left: 1em;
+        margin: 1.5em 0;
+        color: #6b7280;
+        font-style: italic;
+      }
+      
+      .dark .prose blockquote {
+        border-left-color: #4b5563;
+        color: #9ca3af;
+      }
+      
+      .prose code {
+        background-color: #f3f4f6;
+        padding: 0.125em 0.25em;
+        border-radius: 0.25rem;
+        font-size: 0.875em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+      
+      .dark .prose code {
+        background-color: #374151;
+        color: #e5e7eb;
+      }
+      
+      .prose pre {
+        background-color: #1f2937;
+        color: #f9fafb;
+        padding: 1em;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1.5em 0;
+      }
+      
+      .dark .prose pre {
+        background-color: #111827;
+      }
+      
+      .prose pre code {
+        background: none;
+        color: inherit;
+        padding: 0;
+      }
+      
+      .prose a {
+        color: #2563eb;
+        text-decoration: underline;
+      }
+      
+      .dark .prose a {
+        color: #60a5fa;
+      }
+      
+      .prose a:hover {
+        color: #1d4ed8;
+      }
+      
+      .dark .prose a:hover {
+        color: #93c5fd;
+      }
+      
+      .prose img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 1.5em 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
