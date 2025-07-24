@@ -78,9 +78,9 @@ export const HomePage: React.FC = () => {
 
   if (showMacbookLoader && loading) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center w-full h-full bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 dark:from-gray-900 dark:via-blue-900 dark:to-gray-900">
-        <div className="macbook-responsive">
-          <div className="macbook">
+      <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 dark:from-gray-900 dark:via-blue-900 dark:to-gray-900">
+        <div className="macbook-responsive flex items-center justify-center w-full h-full">
+          <div className="macbook mx-auto">
             <div className="inner">
               <div className="screen">
                 <div className="face-one">
@@ -112,30 +112,53 @@ export const HomePage: React.FC = () => {
         {/* Loading text removed as requested */}
         <style>{`
           .macbook-responsive {
-            width: 100vw;
-            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100vw;
+            height: 100vh;
+            min-width: 100vw;
+            min-height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
           }
           .macbook {
             width: 150px;
             height: 96px;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            margin: -85px 0 0 -78px;
             perspective: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: static;
+            margin: 0 auto;
           }
-          @media (max-width: 500px) {
+          @media (max-width: 600px) {
             .macbook {
-              width: 90px;
-              height: 58px;
-              margin: -52px 0 0 -45px;
+              width: 80vw;
+              height: 52vw;
+              max-width: 120px;
+              max-height: 70px;
+              min-width: 70px;
+              min-height: 40px;
             }
             .macbook-responsive {
+              width: 100vw;
+              height: 100vh;
               min-width: 100vw;
               min-height: 100vh;
+              padding: 0;
+              margin: 0;
+            }
+          }
+          @media (max-width: 400px) {
+            .macbook {
+              width: 60vw;
+              height: 38vw;
+              max-width: 90px;
+              max-height: 55px;
+              min-width: 50px;
+              min-height: 30px;
             }
           }
           .shadow {
