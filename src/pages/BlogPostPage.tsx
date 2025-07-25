@@ -80,17 +80,7 @@ export const BlogPostPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 dark:from-gray-900 dark:via-blue-900 dark:to-gray-900">
-      <SEO
-        title={blog.meta_title || blog.title}
-        description={blog.meta_description || blog.excerpt}
-        image={blog.featured_image}
-        type="article"
-        author="FusionFry Team"
-        publishedTime={blog.created_at}
-        modifiedTime={blog.updated_at}
-        tags={blog.tags?.map(tag => tag.name)}
-        keywords={blog.tags?.map(tag => tag.name).join(', ')}
-      />
+     
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
