@@ -67,7 +67,7 @@ export const SitemapGenerator: React.FC = () => {
     // Generate sitemap on component mount
     generateSitemap().then(sitemap => {
       // Store sitemap for potential use
-      console.log('Sitemap generated');
+      console.log('Sitemap generated:', sitemap);
     });
   }, []);
 
