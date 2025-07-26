@@ -99,7 +99,7 @@ export const BlogPostPage: React.FC = () => {
           className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-6 sm:mb-8"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-        
+          Back to articles
         </button>
 
         {/* Featured Image */}
