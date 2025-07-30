@@ -26,6 +26,8 @@ export const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
           loading="lazy"
           decoding="async"
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          draggable={false}
+          onContextMenu={e => e.preventDefault()}
         />
       </div>
       
