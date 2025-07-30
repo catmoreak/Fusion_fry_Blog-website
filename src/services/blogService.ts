@@ -1,5 +1,4 @@
-import { supabase, Blog, Tag } from '../lib/supabase';
-
+import { supabase, Blog } from '../lib/supabase';
 
 const checkSupabase = () => {
   if (!supabase) {
@@ -8,29 +7,8 @@ const checkSupabase = () => {
   return supabase;
 };
 
-// Helper to fetch tags for a single blog
-async function fetchTagsForBlog(blogId: string): Promise<Tag[]> {
-  const { data: blogTags, error: tagsError } = await checkSupabase()
-    .from('blog_tags')
-    .select(`
-      tags (
-        id,
-        name,
-        slug,
-        created_at
-      )
-    `)
-    .eq('blog_id', blogId);
-  if (tagsError) {
-    console.error('Error fetching tags for blog:', blogId, tagsError);
-    return [];
-  }
-  return blogTags?.map((bt: any) => bt.tags).filter(Boolean) || [];
-}
-
 export const blogService = {
-
-  async getPublishedBlogs(): Promise<(Blog & { tags: Tag[] })[]> {
+  async getPublishedBlogs() {
     const { data: blogs, error } = await checkSupabase()
       .from('blogs')
       .select('*')
@@ -46,18 +24,37 @@ export const blogService = {
       return [];
     }
 
-    // Fetch tags for each blog using helper
+    // Fetch tags for each blog separately
     const blogsWithTags = await Promise.all(
-      blogs.map(async (blog: Blog) => ({
-        ...blog,
-        tags: await fetchTagsForBlog(blog.id)
-      }))
+      blogs.map(async (blog) => {
+        const { data: blogTags, error: tagsError } = await checkSupabase()
+          .from('blog_tags')
+          .select(`
+            tags (
+              id,
+              name,
+              slug,
+              created_at
+            )
+          `)
+          .eq('blog_id', blog.id);
+
+        if (tagsError) {
+          console.error('Error fetching tags for blog:', blog.id, tagsError);
+          return { ...blog, tags: [] };
+        }
+
+        return {
+          ...blog,
+          tags: blogTags?.map((bt: any) => bt.tags).filter(Boolean) || []
+        };
+      })
     );
+    
     return blogsWithTags;
   },
 
-
-  async getBlogBySlug(slug: string): Promise<(Blog & { tags: Tag[] }) | null> {
+  async getBlogBySlug(slug: string) {
     const { data: blog, error } = await checkSupabase()
       .from('blogs')
       .select('*')
@@ -74,16 +71,30 @@ export const blogService = {
       return null;
     }
 
-    // Fetch tags for this blog using helper
-    const tags = await fetchTagsForBlog(blog.id);
+    // Fetch tags for this blog
+    const { data: blogTags, error: tagsError } = await checkSupabase()
+      .from('blog_tags')
+      .select(`
+        tags (
+          id,
+          name,
+          slug,
+          created_at
+        )
+      `)
+      .eq('blog_id', blog.id);
+
+    if (tagsError) {
+      console.error('Error fetching tags for blog:', blog.id, tagsError);
+    }
+    
     return {
       ...blog,
-      tags
+      tags: blogTags?.map((bt: any) => bt.tags).filter(Boolean) || []
     };
   },
 
-
-  async getAllBlogs(): Promise<(Blog & { tags: Tag[] })[]> {
+  async getAllBlogs() {
     const { data: blogs, error } = await checkSupabase()
       .from('blogs')
       .select('*')
@@ -98,13 +109,33 @@ export const blogService = {
       return [];
     }
 
-    // Fetch tags for each blog using helper
+    // Fetch tags for each blog separately
     const blogsWithTags = await Promise.all(
-      blogs.map(async (blog: Blog) => ({
-        ...blog,
-        tags: await fetchTagsForBlog(blog.id)
-      }))
+      blogs.map(async (blog) => {
+        const { data: blogTags, error: tagsError } = await checkSupabase()
+          .from('blog_tags')
+          .select(`
+            tags (
+              id,
+              name,
+              slug,
+              created_at
+            )
+          `)
+          .eq('blog_id', blog.id);
+
+        if (tagsError) {
+          console.error('Error fetching tags for blog:', blog.id, tagsError);
+          return { ...blog, tags: [] };
+        }
+
+        return {
+          ...blog,
+          tags: blogTags?.map((bt: any) => bt.tags).filter(Boolean) || []
+        };
+      })
     );
+    
     return blogsWithTags;
   },
 
