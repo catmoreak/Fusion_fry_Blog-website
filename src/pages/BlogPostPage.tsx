@@ -153,12 +153,16 @@ export const BlogPostPage: React.FC = () => {
         </header>
 
         {/* Article Content */}
-        <div 
-          className="prose prose-sm sm:prose-lg dark:prose-invert max-w-none mb-6 sm:mb-8"
-          dangerouslySetInnerHTML={{ 
-            __html: blog.content.replace(new RegExp(`<h[12][^>]*>${blog.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h[12]>`, 'gi'), '')
-          }}
-        />
+        <div className="prose prose-sm sm:prose-lg dark:prose-invert max-w-none mb-6 sm:mb-8">
+          <div
+            dangerouslySetInnerHTML={{
+              __html: blog.content.replace(
+                new RegExp(`<h[12][^>]*>${blog.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h[12]>`, 'gi'),
+                ''
+              )
+            }}
+          />
+        </div>
 
         {/* Share Section */}
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 sm:p-6 text-center">
