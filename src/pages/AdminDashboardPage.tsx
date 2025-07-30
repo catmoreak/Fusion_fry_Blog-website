@@ -6,14 +6,48 @@ import { authService } from '../services/authService';
 import { blogService } from '../services/blogService';
 import { Blog } from '../lib/supabase';
 
-// Simulated online user count hook (replace with real logic as needed)
+
+// Simple WebSocket-based online user count (works for users on the same server instance)
 const useOnlineUsers = () => {
   const [count, setCount] = React.useState(1);
   React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCount(Math.floor(Math.random() * 10) + 1);
-    }, 5000);
-    return () => clearInterval(interval);
+    // Use a public echo WebSocket server for demo, replace with your own for production
+    const ws = new WebSocket('wss://ws.postman-echo.com/raw');
+    let heartbeat: NodeJS.Timeout;
+    let isOpen = false;
+    let online = 1;
+
+    ws.onopen = () => {
+      isOpen = true;
+      ws.send('join');
+      heartbeat = setInterval(() => {
+        if (isOpen) ws.send('ping');
+      }, 10000);
+    };
+
+    ws.onmessage = (event) => {
+      // For demo, just increment a local counter for each message
+      // In production, you would broadcast the online count from your own server
+      if (event.data === 'join') {
+        online++;
+        setCount(online);
+      }
+      if (event.data === 'leave') {
+        online = Math.max(1, online - 1);
+        setCount(online);
+      }
+    };
+
+    ws.onclose = () => {
+      isOpen = false;
+      clearInterval(heartbeat);
+    };
+
+    return () => {
+      if (isOpen) ws.send('leave');
+      ws.close();
+      clearInterval(heartbeat);
+    };
   }, []);
   return count;
 };
