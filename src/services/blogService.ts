@@ -1,5 +1,6 @@
 import { supabase, Blog, Tag } from '../lib/supabase';
 
+
 const checkSupabase = () => {
   if (!supabase) {
     throw new Error('Supabase not configured. Please set up your environment variables.');
@@ -7,8 +8,29 @@ const checkSupabase = () => {
   return supabase;
 };
 
+// Helper to fetch tags for a single blog
+async function fetchTagsForBlog(blogId: string): Promise<Tag[]> {
+  const { data: blogTags, error: tagsError } = await checkSupabase()
+    .from('blog_tags')
+    .select(`
+      tags (
+        id,
+        name,
+        slug,
+        created_at
+      )
+    `)
+    .eq('blog_id', blogId);
+  if (tagsError) {
+    console.error('Error fetching tags for blog:', blogId, tagsError);
+    return [];
+  }
+  return blogTags?.map((bt: any) => bt.tags).filter(Boolean) || [];
+}
+
 export const blogService = {
-  async getPublishedBlogs() {
+
+  async getPublishedBlogs(): Promise<(Blog & { tags: Tag[] })[]> {
     const { data: blogs, error } = await checkSupabase()
       .from('blogs')
       .select('*')
@@ -24,37 +46,18 @@ export const blogService = {
       return [];
     }
 
-    // Fetch tags for each blog separately
+    // Fetch tags for each blog using helper
     const blogsWithTags = await Promise.all(
-      blogs.map(async (blog) => {
-        const { data: blogTags, error: tagsError } = await checkSupabase()
-          .from('blog_tags')
-          .select(`
-            tags (
-              id,
-              name,
-              slug,
-              created_at
-            )
-          `)
-          .eq('blog_id', blog.id);
-
-        if (tagsError) {
-          console.error('Error fetching tags for blog:', blog.id, tagsError);
-          return { ...blog, tags: [] };
-        }
-
-        return {
-          ...blog,
-          tags: blogTags?.map((bt: any) => bt.tags).filter(Boolean) || []
-        };
-      })
+      blogs.map(async (blog: Blog) => ({
+        ...blog,
+        tags: await fetchTagsForBlog(blog.id)
+      }))
     );
-    
     return blogsWithTags;
   },
 
-  async getBlogBySlug(slug: string) {
+
+  async getBlogBySlug(slug: string): Promise<(Blog & { tags: Tag[] }) | null> {
     const { data: blog, error } = await checkSupabase()
       .from('blogs')
       .select('*')
@@ -71,30 +74,16 @@ export const blogService = {
       return null;
     }
 
-    // Fetch tags for this blog
-    const { data: blogTags, error: tagsError } = await checkSupabase()
-      .from('blog_tags')
-      .select(`
-        tags (
-          id,
-          name,
-          slug,
-          created_at
-        )
-      `)
-      .eq('blog_id', blog.id);
-
-    if (tagsError) {
-      console.error('Error fetching tags for blog:', blog.id, tagsError);
-    }
-    
+    // Fetch tags for this blog using helper
+    const tags = await fetchTagsForBlog(blog.id);
     return {
       ...blog,
-      tags: blogTags?.map((bt: any) => bt.tags).filter(Boolean) || []
+      tags
     };
   },
 
-  async getAllBlogs() {
+
+  async getAllBlogs(): Promise<(Blog & { tags: Tag[] })[]> {
     const { data: blogs, error } = await checkSupabase()
       .from('blogs')
       .select('*')
@@ -109,33 +98,13 @@ export const blogService = {
       return [];
     }
 
-    // Fetch tags for each blog separately
+    // Fetch tags for each blog using helper
     const blogsWithTags = await Promise.all(
-      blogs.map(async (blog) => {
-        const { data: blogTags, error: tagsError } = await checkSupabase()
-          .from('blog_tags')
-          .select(`
-            tags (
-              id,
-              name,
-              slug,
-              created_at
-            )
-          `)
-          .eq('blog_id', blog.id);
-
-        if (tagsError) {
-          console.error('Error fetching tags for blog:', blog.id, tagsError);
-          return { ...blog, tags: [] };
-        }
-
-        return {
-          ...blog,
-          tags: blogTags?.map((bt: any) => bt.tags).filter(Boolean) || []
-        };
-      })
+      blogs.map(async (blog: Blog) => ({
+        ...blog,
+        tags: await fetchTagsForBlog(blog.id)
+      }))
     );
-    
     return blogsWithTags;
   },
 
