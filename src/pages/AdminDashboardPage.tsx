@@ -6,10 +6,23 @@ import { authService } from '../services/authService';
 import { blogService } from '../services/blogService';
 import { Blog } from '../lib/supabase';
 
+// Simulated online user count hook (replace with real logic as needed)
+const useOnlineUsers = () => {
+  const [count, setCount] = React.useState(1);
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCount(Math.floor(Math.random() * 10) + 1);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+  return count;
+};
+
 export const AdminDashboardPage: React.FC = () => {
   const [user, setUser] = React.useState<any>(null);
   const [blogs, setBlogs] = React.useState<Blog[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const onlineUsers = useOnlineUsers();
 
   React.useEffect(() => {
     const checkUser = async () => {
@@ -94,6 +107,11 @@ export const AdminDashboardPage: React.FC = () => {
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Admin Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
+              {/* Professional, simple online users badge in navbar */}
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 border border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-200 rounded-2xl text-xs font-medium shadow-none">
+                <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                {onlineUsers} online{onlineUsers !== 1 ? ' users' : ' user'}
+              </span>
               <ThemeToggle />
               <Link
                 to="/"
