@@ -182,12 +182,12 @@ export const AdminBlogEditorPage: React.FC = () => {
             <div className="flex items-center">
               <button
                 onClick={() => navigate('/admin/dashboard')}
-                className="flex items-center text-gray-600 hover:text-blue-600 transition-colors mr-4"
+                className="flex items-center text-gray-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors mr-4"
               >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Dashboard
               </button>
-              <h1 className="text-xl font-semibold text-gray-900">
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                 {id === 'new' ? 'New Blog Post' : 'Edit Blog Post'}
               </h1>
             </div>
