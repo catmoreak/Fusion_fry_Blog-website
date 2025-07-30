@@ -358,6 +358,15 @@ export const AdminBlogEditorPage: React.FC = () => {
                 modules={quillModules}
                 style={{ minHeight: '300px' }}
               />
+              {/* Force white text in dark mode for ReactQuill content */}
+              <style>{`
+                .dark .ql-editor {
+                  color: #fff !important;
+                }
+                .dark .ql-editor p, .dark .ql-editor span, .dark .ql-editor h1, .dark .ql-editor h2, .dark .ql-editor h3, .dark .ql-editor h4, .dark .ql-editor h5, .dark .ql-editor h6 {
+                  color: #fff !important;
+                }
+              `}</style>
             </div>
           </div>
 
