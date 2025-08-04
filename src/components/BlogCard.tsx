@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, User, Tag } from 'lucide-react';
 import { Blog } from '../lib/supabase';
+import { LazyImage } from './LazyImage';
 
 interface BlogCardProps {
   blog: Blog;
@@ -20,14 +21,15 @@ export const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
   return (
     <article className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden w-full">
       <div className="aspect-[16/9] overflow-hidden">
-        <img
-          src={blog.featured_image || 'https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=800'}
-          alt={blog.title}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" draggable={false}
-          onContextMenu={e => e.preventDefault()}
-        />
+        <picture>
+          <source srcSet={(blog.featured_image || 'https://images.pexels.com/photos/270348/pexels-photo-270348.webp?auto=compress&cs=tinysrgb&w=800').replace('.jpg', '.webp').replace('.jpeg', '.webp')} type="image/webp" />
+          <LazyImage
+            src={blog.featured_image || 'https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=800'}
+            alt={blog.title}
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+          />
+        </picture>
       </div>
       
       <div className="p-4 sm:p-6">
