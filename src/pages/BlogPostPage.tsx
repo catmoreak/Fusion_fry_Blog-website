@@ -109,8 +109,6 @@ export const BlogPostPage: React.FC = () => {
               src={blog.featured_image}
               alt={blog.title}
               className="w-full h-full object-cover"
-              draggable={false}
-              onContextMenu={e => e.preventDefault()}
             />
           </div>
         )}
