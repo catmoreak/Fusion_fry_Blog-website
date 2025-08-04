@@ -1,21 +1,2 @@
-User-agent: *
-Allow: /
-
-# Sitemap
-Sitemap: https://your-domain.com/sitemap.xml
-
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
-
-# Block admin areas
-Disallow: /admin/
-Disallow: /admin/*
-
-# Allow important pages
-Allow: /
-Allow: /blog/
-Allow: /about
-Allow: /categories
-Allow: /contact
-Allow: /terms
+User-agent: *Disallow:
 Allow: /privacy
