@@ -4,6 +4,7 @@ import { Calendar, User, Tag, Share2, ArrowLeft } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { blogService } from '../services/blogService';
 import { Blog, supabase } from '../lib/supabase';
+import { LazyImage } from '../components/LazyImage';
 
 export const BlogPostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -105,10 +106,11 @@ export const BlogPostPage: React.FC = () => {
         {/* Featured Image */}
         {blog.featured_image && (
           <div className="aspect-[16/9] rounded-lg sm:rounded-2xl overflow-hidden mb-6 sm:mb-8">
-            <img
+            <LazyImage
               src={blog.featured_image}
               alt={blog.title}
               className="w-full h-full object-cover"
+              loading="lazy"
             />
           </div>
         )}

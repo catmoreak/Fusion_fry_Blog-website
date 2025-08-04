@@ -3,6 +3,7 @@ import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Save, ArrowLeft, Eye, Tag as TagIcon, X } from 'lucide-react';
+import { LazyImage } from '../components/LazyImage';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { authService } from '../services/authService';
 import { blogService } from '../services/blogService';
@@ -271,10 +272,11 @@ export const AdminBlogEditorPage: React.FC = () => {
               placeholder="https://example.com/image.jpg"
             />
             {formData.featured_image && (
-              <img
+              <LazyImage
                 src={formData.featured_image}
                 alt="Featured"
                 className="mt-2 w-32 h-20 object-cover rounded border"
+                loading="lazy"
               />
             )}
           </div>
