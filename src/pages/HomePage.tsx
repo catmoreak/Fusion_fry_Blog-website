@@ -19,6 +19,16 @@ export const HomePage: React.FC = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [blogs, setBlogs] = React.useState<Blog[]>([]);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  // Filter blogs by search query (title or content)
+  const filteredBlogs = React.useMemo(() => {
+    if (!searchQuery.trim()) return blogs;
+    const q = searchQuery.toLowerCase();
+    return blogs.filter(blog =>
+      blog.title?.toLowerCase().includes(q) ||
+      blog.content?.toLowerCase().includes(q)
+    );
+  }, [blogs, searchQuery]);
   const { showMacbookLoader, setShowMacbookLoader } = useLoader();
   const [loading, setLoading] = React.useState(true);
   // const [showCircleLoader, setShowCircleLoader] = React.useState(false);
@@ -429,22 +439,33 @@ export const HomePage: React.FC = () => {
       {/* Articles Section */}
       <section id="articles-section" className="py-8 sm:py-12 lg:py-16 flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6 sm:mb-8 lg:mb-12">
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8 lg:mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               {selectedTag ? `Articles in "${getTagName()}"` : 'Latest Articles'}
             </h2>
-            {selectedTag && (
-              <button
-                onClick={clearTagFilter}
-                className="flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Clear filter
-              </button>
-            )}
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search articles..."
+                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                style={{ minWidth: 200 }}
+              />
+              {selectedTag && (
+                <button
+                  onClick={clearTagFilter}
+                  className="flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Clear filter
+                </button>
+              )}
+            </div>
           </div>
 
-          {selectedTag && blogs.length === 0 && !loading && (
+          {selectedTag && filteredBlogs.length === 0 && !loading && (
             <div className="text-center py-8 sm:py-12 lg:py-16 bg-white dark:bg-gray-800 rounded-lg mb-8">
               <Tag className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -462,7 +483,7 @@ export const HomePage: React.FC = () => {
             </div>
           )}
 
-          {blogs.length === 0 && !selectedTag ? (
+          {filteredBlogs.length === 0 && !selectedTag ? (
             <div className="text-center py-8 sm:py-12 lg:py-16 bg-white dark:bg-gray-800 rounded-lg">
               <Clock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -472,9 +493,9 @@ export const HomePage: React.FC = () => {
                 Check back soon for new content
               </p>
             </div>
-          ) : blogs.length > 0 ? (
+          ) : filteredBlogs.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-              {blogs.map((blog) => (
+              {filteredBlogs.map((blog) => (
                 <BlogCard key={blog.id} blog={blog} />
               ))}
             </div>
