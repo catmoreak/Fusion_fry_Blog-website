@@ -131,13 +131,19 @@ export const blogService = {
   },
 
   async getTags() {
-    const { data, error } = await checkSupabase()
-      .from('tags')
-      .select('*')
-      .order('name');
-
-    if (error) throw error;
-    return data || [];
+    // Fetch tags from the Vercel serverless function instead of directly from Supabase
+    const response = await fetch('/api/blogs.mjs?tags=1');
+    if (!response.ok) {
+      throw new Error('Failed to fetch tags');
+    }
+    const data = await response.json();
+    // Expecting the API to return { tags: [...] } or just an array of tags
+    if (Array.isArray(data)) {
+      return data;
+    } else if (data && Array.isArray(data.tags)) {
+      return data.tags;
+    }
+    return [];
   },
 
   async createTag(name: string) {
