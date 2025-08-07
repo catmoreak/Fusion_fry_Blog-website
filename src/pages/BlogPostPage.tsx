@@ -98,65 +98,63 @@ export const BlogPostPage: React.FC = () => {
       />
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-        {/* Text-to-Speech Controls */}
-        <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
-          <div className="flex flex-col items-end gap-2 bg-white/95 dark:bg-gray-900/95 rounded-2xl px-5 py-3 shadow-2xl border border-blue-200 dark:border-blue-800 min-w-[220px]">
-            <div className="flex items-center gap-3 mb-1">
-              <button
-                className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-white shadow-lg text-xl ${isSpeaking && !isPaused ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'}`}
-                title={isSpeaking ? (isPaused ? 'Resume reading' : 'Pause reading') : 'Listen to full article'}
-                onClick={() => {
-                  if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
-                    if (isSpeaking && !isPaused) {
-                      window.speechSynthesis.pause();
-                      setIsPaused(true);
-                    } else if (isSpeaking && isPaused) {
-                      window.speechSynthesis.resume();
-                      setIsPaused(false);
-                    } else {
-                      const utter = new window.SpeechSynthesisUtterance();
-                      const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-                      utter.text = `${blog.title}. ${plainText}`;
-                      utter.lang = 'en-US';
-                      utter.rate = 1;
-                      utter.onend = () => { setIsSpeaking(false); setIsPaused(false); };
-                      utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); };
-                      speechUtteranceRef.current = utter;
-                      window.speechSynthesis.cancel();
-                      window.speechSynthesis.speak(utter);
-                      setIsSpeaking(true);
-                      setIsPaused(false);
-                    }
-                  } else {
-                    alert('Sorry, your browser does not support text-to-speech.');
-                  }
-                }}
-              >
-                {isSpeaking ? (
-                  isPaused ? (
-                    <span role="img" aria-label="Resume">▶️</span>
-                  ) : (
-                    <span role="img" aria-label="Pause">⏸️</span>
-                  )
-                ) : (
-                  <span role="img" aria-label="Listen">🔊</span>
-                )}
-              </button>
-              {isSpeaking && (
-                <button
-                  className="ml-1 px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-                  onClick={() => {
-                    window.speechSynthesis.cancel();
-                    setIsSpeaking(false);
+        {/* Text-to-Speech Controls - Redesigned */}
+        <div className="absolute top-6 right-6 z-20">
+          <div className="flex items-center gap-3 bg-gradient-to-r from-blue-600/90 to-blue-400/90 dark:from-blue-900/90 dark:to-blue-700/90 shadow-xl rounded-full px-4 py-2 border border-blue-300 dark:border-blue-800">
+            <span className="text-white dark:text-blue-100 font-semibold text-sm mr-1 select-none">Listen</span>
+            <button
+              className={`flex items-center justify-center w-9 h-9 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 text-white text-xl shadow ${isSpeaking && !isPaused ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-700 hover:bg-blue-800'}`}
+              title={isSpeaking ? (isPaused ? 'Resume reading' : 'Pause reading') : 'Listen to full article'}
+              onClick={() => {
+                if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+                  if (isSpeaking && !isPaused) {
+                    window.speechSynthesis.pause();
+                    setIsPaused(true);
+                  } else if (isSpeaking && isPaused) {
+                    window.speechSynthesis.resume();
                     setIsPaused(false);
-                  }}
-                  title="Stop reading"
-                >
-                  Stop
-                </button>
+                  } else {
+                    const utter = new window.SpeechSynthesisUtterance();
+                    const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                    utter.text = `${blog.title}. ${plainText}`;
+                    utter.lang = 'en-US';
+                    utter.rate = 1;
+                    utter.onend = () => { setIsSpeaking(false); setIsPaused(false); };
+                    utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); };
+                    speechUtteranceRef.current = utter;
+                    window.speechSynthesis.cancel();
+                    window.speechSynthesis.speak(utter);
+                    setIsSpeaking(true);
+                    setIsPaused(false);
+                  }
+                } else {
+                  alert('Sorry, your browser does not support text-to-speech.');
+                }
+              }}
+            >
+              {isSpeaking ? (
+                isPaused ? (
+                  <span role="img" aria-label="Resume">▶️</span>
+                ) : (
+                  <span role="img" aria-label="Pause">⏸️</span>
+                )
+              ) : (
+                <span role="img" aria-label="Listen">🔊</span>
               )}
-            </div>
-            {/* Speed slider and label removed */}
+            </button>
+            {isSpeaking && (
+              <button
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 text-blue-700 dark:text-blue-200 text-xs font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition shadow border border-blue-200 dark:border-blue-700"
+                onClick={() => {
+                  window.speechSynthesis.cancel();
+                  setIsSpeaking(false);
+                  setIsPaused(false);
+                }}
+                title="Stop reading"
+              >
+                <span className="font-bold">✖</span>
+              </button>
+            )}
           </div>
         </div>
         <button 
