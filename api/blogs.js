@@ -7,7 +7,7 @@ if (!supabaseUrl || !supabaseKey) {
 }
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const handler = async (req: any, res: any) => {
+const handler = async (req, res) => {
   const { data, error } = await supabase
     .from('blogs')
     .select('*')

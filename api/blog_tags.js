@@ -7,7 +7,7 @@ if (!supabaseUrl || !supabaseKey) {
 }
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const handler = async (req: any, res: any) => {
+const handler = async (req, res) => {
   const { blog_id } = req.query;
   if (!blog_id) {
     return res.status(400).json({ error: 'Missing blog_id parameter' });
