@@ -13,6 +13,7 @@ export const HomePage: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = React.useState(false);
   const [isPaused, setIsPaused] = React.useState(false);
   const [currentUtterId, setCurrentUtterId] = React.useState<string | null>(null);
+  const utterRef = React.useRef<SpeechSynthesisUtterance | null>(null);
   // Scroll to articles section
   const handleExploreArticles = () => {
     const section = document.getElementById('articles-section');
@@ -505,16 +506,17 @@ export const HomePage: React.FC = () => {
                   <div className="absolute top-2 right-2 z-10 flex gap-2">
                     <button
                       className={`bg-blue-600 text-white rounded-full p-2 shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition`}
-                      title={isSpeaking && currentUtterId === blog.id ? (isPaused ? 'Resume reading' : 'Pause reading') : 'Listen to article summary'}
+                      title={isSpeaking && currentUtterId === blog.id ? 'Restart reading' : 'Listen to article summary'}
                       onClick={() => {
                         if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+                          window.speechSynthesis.cancel();
                           const utter = new window.SpeechSynthesisUtterance();
                           utter.text = `${blog.title}. Article excerpt: ${(blog.content || '').replace(/\s+/g, ' ').slice(0, 220)}${blog.content && blog.content.length > 220 ? '...' : ''}`;
                           utter.lang = 'en-US';
                           utter.rate = 1;
-                          utter.onend = () => { setIsSpeaking(false); setIsPaused(false); setCurrentUtterId(null); };
-                          utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); setCurrentUtterId(null); };
-                          window.speechSynthesis.cancel();
+                          utter.onend = () => { setIsSpeaking(false); setIsPaused(false); setCurrentUtterId(null); utterRef.current = null; };
+                          utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); setCurrentUtterId(null); utterRef.current = null; };
+                          utterRef.current = utter;
                           window.speechSynthesis.speak(utter);
                           setIsSpeaking(true);
                           setIsPaused(false);
@@ -525,18 +527,14 @@ export const HomePage: React.FC = () => {
                       }}
                     >
                       {isSpeaking && currentUtterId === blog.id ? (
-                        isPaused ? (
-                          <span role="img" aria-label="Resume">▶️</span>
-                        ) : (
-                          <span role="img" aria-label="Pause">⏸️</span>
-                        )
+                        <span role="img" aria-label="Restart">🔄</span>
                       ) : (
                         <span role="img" aria-label="Listen">🔊</span>
                       )}
                     </button>
                     {isSpeaking && currentUtterId === blog.id && (
                       <button
-                        className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full px-3 py-1 text-xs font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                        className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded-full px-3 py-1 text-xs font-semibold hover:bg-blue-200 dark:hover:bg-blue-800 transition border border-blue-200 dark:border-blue-700"
                         onClick={() => {
                           if (isPaused) {
                             window.speechSynthesis.resume();
@@ -548,21 +546,26 @@ export const HomePage: React.FC = () => {
                         }}
                         title={isPaused ? 'Resume reading' : 'Pause reading'}
                       >
-                        {isPaused ? 'Resume' : 'Pause'}
+                        {isPaused ? (
+                          <span className="flex items-center gap-1"><span role="img" aria-label="Resume">▶️</span> Resume</span>
+                        ) : (
+                          <span className="flex items-center gap-1"><span role="img" aria-label="Pause">⏸️</span> Pause</span>
+                        )}
                       </button>
                     )}
                     {isSpeaking && currentUtterId === blog.id && (
                       <button
-                        className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full px-3 py-1 text-xs font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                        className="bg-gray-100 dark:bg-gray-800 text-blue-700 dark:text-blue-200 rounded-full px-3 py-1 text-xs font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition border border-blue-200 dark:border-blue-700"
                         onClick={() => {
                           window.speechSynthesis.cancel();
                           setIsSpeaking(false);
                           setIsPaused(false);
                           setCurrentUtterId(null);
+                          utterRef.current = null;
                         }}
                         title="Stop reading"
                       >
-                        Stop
+                        <span className="font-bold">✖</span>
                       </button>
                     )}
                   </div>
