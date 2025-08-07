@@ -496,7 +496,28 @@ export const HomePage: React.FC = () => {
           ) : filteredBlogs.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {filteredBlogs.map((blog: Blog) => (
-                <BlogCard key={blog.id} blog={blog} />
+                <div key={blog.id} className="relative group">
+                  <BlogCard blog={blog} />
+                  <button
+                    className="absolute top-2 right-2 z-10 bg-blue-600 text-white rounded-full p-2 shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                    title="Listen to article summary"
+                    onClick={() => {
+                      if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+                        const utter = new window.SpeechSynthesisUtterance();
+                        // Speak title and a short intro, then a snippet of content
+                        utter.text = `${blog.title}. Article excerpt: ${(blog.content || '').replace(/\s+/g, ' ').slice(0, 220)}${blog.content && blog.content.length > 220 ? '...' : ''}`;
+                        utter.lang = 'en-US';
+                        utter.rate = 1;
+                        window.speechSynthesis.cancel();
+                        window.speechSynthesis.speak(utter);
+                      } else {
+                        alert('Sorry, your browser does not support text-to-speech.');
+                      }
+                    }}
+                  >
+                    <span role="img" aria-label="Listen">🔊</span>
+                  </button>
+                </div>
               ))}
             </div>
           ) : null}
