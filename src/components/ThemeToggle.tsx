@@ -38,11 +38,11 @@ export const ThemeToggle: React.FC = () => {
       />
       {/* Moon icon (left) */}
       <span className={`absolute left-1 top-1/2 -translate-y-1/2 flex items-center justify-center w-[22px] h-[22px] transition-all duration-300 ${isDark ? 'scale-110' : 'opacity-60 scale-100'}`}>
-        <Moon className={`h-5 w-5 transition-colors duration-300 ${isDark ? 'text-blue-400' : 'text-gray-400'}`} />
+        <Moon className={`h-5 w-5 transition-colors duration-300 ${isDark ? 'text-blue-400 rolling' : 'text-gray-400'} ${isDark ? 'animate-roll' : ''}`} />
       </span>
       {/* Sun icon (right) */}
       <span className={`absolute right-1 top-1/2 -translate-y-1/2 flex items-center justify-center w-[22px] h-[22px] transition-all duration-300 ${!isDark ? 'scale-110' : 'opacity-60 scale-100'}`}>
-        <Sun className={`h-5 w-5 transition-colors duration-300 ${!isDark ? 'text-yellow-400' : 'text-gray-400'}`} />
+        <Sun className={`h-5 w-5 transition-colors duration-300 ${!isDark ? 'text-yellow-400 rolling' : 'text-gray-400'} ${!isDark ? 'animate-roll' : ''}`} />
       </span>
       {/* Ball */}
       <span
@@ -56,6 +56,13 @@ export const ThemeToggle: React.FC = () => {
         <span className={`block w-2 h-2 rounded-full ${isDark ? 'bg-blue-400' : 'bg-yellow-400'} transition-colors duration-300`} />
       </span>
       <style>{`
+        @keyframes roll {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .animate-roll {
+          animation: roll 0.7s cubic-bezier(.7,.2,.3,1) 1;
+        }
         .theme-toggle-glass {
           box-shadow: 0 2px 16px 0 #2563eb22, 0 1.5px 8px 0 #facc1533;
           background: transparent;
