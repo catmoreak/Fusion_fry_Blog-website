@@ -7,7 +7,7 @@ if (!supabaseUrl || !supabaseKey) {
 }
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const handler = async (req, res) => {
+export default async function handler(req, res) {
   const { data, error } = await supabase
     .from('blogs')
     .select('*')
@@ -17,6 +17,4 @@ const handler = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
   res.status(200).json(data);
-};
-
-export default handler;
+}

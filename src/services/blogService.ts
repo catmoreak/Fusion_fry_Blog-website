@@ -10,7 +10,7 @@ const checkSupabase = () => {
 export const blogService = {
   async getPublishedBlogs() {
     // Fetch blogs from the Vercel serverless function instead of directly from Supabase
-    const response = await fetch('/api/blogs');
+    const response = await fetch('/api/blogs.mjs');
     if (!response.ok) {
       throw new Error('Failed to fetch blogs');
     }
@@ -20,7 +20,7 @@ export const blogService = {
 
   async getBlogBySlug(slug: string) {
     // Fetch all blogs from the Vercel serverless function and filter by slug
-    const response = await fetch('/api/blogs');
+    const response = await fetch('/api/blogs.mjs');
     if (!response.ok) {
       throw new Error('Failed to fetch blogs');
     }
