@@ -8,7 +8,20 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default async function handler(req, res) {
-  const { data, error } = await supabase
+  // If ?tags=1, return all tags
+  if (req.query && req.query.tags) {
+    const { data: tags, error: tagsError } = await supabase
+      .from('tags')
+      .select('*')
+      .order('name');
+    if (tagsError) {
+      return res.status(500).json({ error: tagsError.message });
+    }
+    return res.status(200).json(tags);
+  }
+
+  // Otherwise, return blogs with their tags
+  const { data: blogs, error } = await supabase
     .from('blogs')
     .select('*')
     .eq('published', true);
@@ -16,5 +29,28 @@ export default async function handler(req, res) {
   if (error) {
     return res.status(500).json({ error: error.message });
   }
-  res.status(200).json(data);
+
+  // Fetch tags for each blog
+  const blogsWithTags = await Promise.all(
+    blogs.map(async (blog) => {
+      const { data: blogTags, error: tagsError } = await supabase
+        .from('blog_tags')
+        .select(`
+          tags (
+            id,
+            name,
+            slug,
+            created_at
+          )
+        `)
+        .eq('blog_id', blog.id);
+
+      return {
+        ...blog,
+        tags: blogTags?.map((bt) => bt.tags).filter(Boolean) || []
+      };
+    })
+  );
+
+  res.status(200).json(blogsWithTags);
 }
