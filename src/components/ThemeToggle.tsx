@@ -63,11 +63,11 @@ export const ThemeToggle: React.FC = () => {
         {/* Stars burst animation */}
         {showStars && (
           <>
-            <svg className="star-burst star1" width="10" height="10" viewBox="0 0 10 10" fill="none"><polygon points="5,0 6,3.5 9.5,4 6.5,6 7.5,9.5 5,7.5 2.5,9.5 3.5,6 0.5,4 4,3.5" fill="#fffbe9" stroke="#ffe066" strokeWidth="0.5"/></svg>
-            <svg className="star-burst star2" width="8" height="8" viewBox="0 0 8 8" fill="none"><polygon points="4,0 4.7,2.5 7.5,3 5.2,4.5 6,7 4,5.5 2,7 2.8,4.5 0.5,3 3.3,2.5" fill="#fffbe9" stroke="#ffe066" strokeWidth="0.4"/></svg>
-            <svg className="star-burst star3" width="7" height="7" viewBox="0 0 7 7" fill="none"><polygon points="3.5,0 4,2 6.5,2.5 4.5,4 5,6.5 3.5,5.2 2,6.5 2.5,4 0.5,2.5 3,2" fill="#fffbe9" stroke="#ffe066" strokeWidth="0.3"/></svg>
-            <svg className="star-burst star4" width="6" height="6" viewBox="0 0 6 6" fill="none"><polygon points="3,0 3.4,1.5 5.5,2 3.8,3 4.2,5 3,4 1.8,5 2.2,3 0.5,2 2.6,1.5" fill="#fffbe9" stroke="#ffe066" strokeWidth="0.3"/></svg>
-            <svg className="star-burst star5" width="5" height="5" viewBox="0 0 5 5" fill="none"><polygon points="2.5,0 2.8,1.2 4.5,1.5 3.2,2.5 3.5,4.5 2.5,3.5 1.5,4.5 1.8,2.5 0.5,1.5 2.2,1.2" fill="#fffbe9" stroke="#ffe066" strokeWidth="0.2"/></svg>
+            <svg className="star-burst star1" width="10" height="10" viewBox="0 0 10 10" fill="none" style={{animationDelay: '0ms'}}><polygon points="5,0 6,3.5 9.5,4 6.5,6 7.5,9.5 5,7.5 2.5,9.5 3.5,6 0.5,4 4,3.5" fill="#fffbe9" stroke="#ffe066" strokeWidth="0.5"/></svg>
+            <svg className="star-burst star2" width="8" height="8" viewBox="0 0 8 8" fill="none" style={{animationDelay: '80ms'}}><polygon points="4,0 4.7,2.5 7.5,3 5.2,4.5 6,7 4,5.5 2,7 2.8,4.5 0.5,3 3.3,2.5" fill="#fffbe9" stroke="#ffe066" strokeWidth="0.4"/></svg>
+            <svg className="star-burst star3" width="7" height="7" viewBox="0 0 7 7" fill="none" style={{animationDelay: '160ms'}}><polygon points="3.5,0 4,2 6.5,2.5 4.5,4 5,6.5 3.5,5.2 2,6.5 2.5,4 0.5,2.5 3,2" fill="#fffbe9" stroke="#ffe066" strokeWidth="0.3"/></svg>
+            <svg className="star-burst star4" width="6" height="6" viewBox="0 0 6 6" fill="none" style={{animationDelay: '240ms'}}><polygon points="3,0 3.4,1.5 5.5,2 3.8,3 4.2,5 3,4 1.8,5 2.2,3 0.5,2 2.6,1.5" fill="#fffbe9" stroke="#ffe066" strokeWidth="0.3"/></svg>
+            <svg className="star-burst star5" width="5" height="5" viewBox="0 0 5 5" fill="none" style={{animationDelay: '320ms'}}><polygon points="2.5,0 2.8,1.2 4.5,1.5 3.2,2.5 3.5,4.5 2.5,3.5 1.5,4.5 1.8,2.5 0.5,1.5 2.2,1.2" fill="#fffbe9" stroke="#ffe066" strokeWidth="0.2"/></svg>
           </>
         )}
       </span>
@@ -103,10 +103,11 @@ export const ThemeToggle: React.FC = () => {
           100% { transform: scale(1) translateY(0); }
         }
         @keyframes star-burst {
-          0% { opacity: 0; transform: scale(0.5) translate(0,0); }
-          20% { opacity: 1; }
-          80% { opacity: 1; }
-          100% { opacity: 0; transform: scale(1.1) translate(var(--tx), var(--ty)); }
+          0% { opacity: 0; transform: scale(0.5) rotate(0deg) translate(0,0); }
+          15% { opacity: 1; transform: scale(1.1) rotate(10deg) translate(0,0); }
+          40% { opacity: 1; }
+          70% { opacity: 1; transform: scale(1.1) rotate(10deg) translate(var(--tx), var(--ty)); }
+          100% { opacity: 0; transform: scale(0.7) rotate(25deg) translate(var(--tx), var(--ty)); }
         }
         .star-burst {
           position: absolute;
@@ -114,6 +115,7 @@ export const ThemeToggle: React.FC = () => {
           z-index: 1;
           animation: star-burst 0.9s cubic-bezier(.7,.2,.3,1) 1;
           filter: drop-shadow(0 0 2px #fffbe9cc);
+          pointer-events: none;
         }
         .star1 { --tx: -12px; --ty: -10px; left: 2px; top: 2px; }
         .star2 { --tx: 14px; --ty: -8px; right: 2px; top: 4px; }
