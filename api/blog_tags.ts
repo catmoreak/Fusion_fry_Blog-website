@@ -1,4 +1,3 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -8,7 +7,7 @@ if (!supabaseUrl || !supabaseKey) {
 }
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+const handler = async (req: any, res: any) => {
   const { blog_id } = req.query;
   if (!blog_id) {
     return res.status(400).json({ error: 'Missing blog_id parameter' });
@@ -22,4 +21,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: error.message });
   }
   res.status(200).json(data);
-}
+};
+
+export default handler;
