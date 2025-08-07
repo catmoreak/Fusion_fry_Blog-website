@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sun, Moon } from 'lucide-react';
 
+
 export const ThemeToggle: React.FC = () => {
   const [isDark, setIsDark] = React.useState(() => {
     if (typeof window !== 'undefined') {
@@ -10,6 +11,10 @@ export const ThemeToggle: React.FC = () => {
     return false;
   });
 
+  // Track previous theme to trigger animation only when toggling to light mode
+  const prevIsDark = React.useRef(isDark);
+  const [sunShouldRoll, setSunShouldRoll] = React.useState(false);
+
   React.useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark');
@@ -18,6 +23,13 @@ export const ThemeToggle: React.FC = () => {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
+
+    // If toggling from dark to light, roll the sun
+    if (prevIsDark.current && !isDark) {
+      setSunShouldRoll(true);
+      setTimeout(() => setSunShouldRoll(false), 700); // match animation duration
+    }
+    prevIsDark.current = isDark;
   }, [isDark]);
 
   return (
@@ -38,11 +50,11 @@ export const ThemeToggle: React.FC = () => {
       />
       {/* Moon icon (left) */}
       <span className={`absolute left-1 top-1/2 -translate-y-1/2 flex items-center justify-center w-[22px] h-[22px] transition-all duration-300 ${isDark ? 'scale-110' : 'opacity-60 scale-100'}`}>
-        <Moon className={`h-5 w-5 transition-colors duration-300 ${isDark ? 'text-blue-400 rolling' : 'text-gray-400'} ${isDark ? 'animate-roll' : ''}`} />
+        <Moon className={`h-5 w-5 transition-colors duration-300 ${isDark ? 'text-blue-400' : 'text-gray-400'}`} />
       </span>
-      {/* Sun icon (right) */}
+      {/* Sun icon (right) - rolls only when toggling to light mode */}
       <span className={`absolute right-1 top-1/2 -translate-y-1/2 flex items-center justify-center w-[22px] h-[22px] transition-all duration-300 ${!isDark ? 'scale-110' : 'opacity-60 scale-100'}`}>
-        <Sun className={`h-5 w-5 transition-colors duration-300 ${!isDark ? 'text-yellow-400 rolling' : 'text-gray-400'} ${!isDark ? 'animate-roll' : ''}`} />
+        <Sun className={`h-5 w-5 transition-colors duration-300 ${!isDark ? 'text-yellow-400' : 'text-gray-400'} ${sunShouldRoll ? 'animate-roll' : ''}`} />
       </span>
       {/* Ball */}
       <span
