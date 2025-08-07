@@ -10,6 +10,8 @@ export const BlogPostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [blog, setBlog] = React.useState<Blog | null>(null);
   const [speechRate, setSpeechRate] = React.useState(1);
+  const [isSpeaking, setIsSpeaking] = React.useState(false);
+  const speechUtteranceRef = React.useRef<SpeechSynthesisUtterance | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [notFound, setNotFound] = React.useState(false);
 
@@ -97,40 +99,76 @@ export const BlogPostPage: React.FC = () => {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
         {/* Text-to-Speech Controls */}
         <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
-          <button
-            className="bg-blue-600 text-white rounded-full p-2 shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-            title="Listen to full article"
-            onClick={() => {
-              if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
-                const utter = new window.SpeechSynthesisUtterance();
-                // Remove HTML tags for speech, fallback to plain text
-                const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-                utter.text = `${blog.title}. ${plainText}`;
-                utter.lang = 'en-US';
-                utter.rate = speechRate;
-                window.speechSynthesis.cancel();
-                window.speechSynthesis.speak(utter);
-              } else {
-                alert('Sorry, your browser does not support text-to-speech.');
-              }
-            }}
-          >
-            <span role="img" aria-label="Listen">🔊</span>
-          </button>
-          <label className="flex items-center gap-2 bg-white/80 dark:bg-gray-900/80 rounded px-2 py-1 text-xs shadow border border-blue-200 dark:border-blue-800">
-            <span className="text-gray-700 dark:text-gray-200">Speed</span>
-            <input
-              type="range"
-              min="0.5"
-              max="2"
-              step="0.05"
-              value={speechRate}
-              onChange={e => setSpeechRate(Number(e.target.value))}
-              className="accent-blue-600 h-1 w-20"
-              aria-label="Speech speed"
-            />
-            <span className="w-8 text-right tabular-nums text-gray-700 dark:text-gray-200">{speechRate.toFixed(2)}x</span>
-          </label>
+          <div className="flex items-center gap-2 bg-white/90 dark:bg-gray-900/90 rounded-xl px-4 py-2 shadow-lg border border-blue-200 dark:border-blue-800">
+            <button
+              className={`flex items-center justify-center w-9 h-9 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${isSpeaking ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} text-white shadow`}
+              title={isSpeaking ? 'Pause reading' : 'Listen to full article'}
+              onClick={() => {
+                if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+                  if (isSpeaking) {
+                    window.speechSynthesis.cancel();
+                    setIsSpeaking(false);
+                  } else {
+                    const utter = new window.SpeechSynthesisUtterance();
+                    const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                    utter.text = `${blog.title}. ${plainText}`;
+                    utter.lang = 'en-US';
+                    utter.rate = speechRate;
+                    utter.onend = () => setIsSpeaking(false);
+                    utter.onerror = () => setIsSpeaking(false);
+                    speechUtteranceRef.current = utter;
+                    window.speechSynthesis.cancel();
+                    window.speechSynthesis.speak(utter);
+                    setIsSpeaking(true);
+                  }
+                } else {
+                  alert('Sorry, your browser does not support text-to-speech.');
+                }
+              }}
+            >
+              {isSpeaking ? (
+                <span role="img" aria-label="Pause">⏸️</span>
+              ) : (
+                <span role="img" aria-label="Listen">🔊</span>
+              )}
+            </button>
+            <div className="flex flex-col items-center">
+              <label htmlFor="speechRateSlider" className="text-xs text-gray-700 dark:text-gray-200 font-medium mb-1">Speech Speed</label>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">0.5x</span>
+                <input
+                  id="speechRateSlider"
+                  type="range"
+                  min="0.5"
+                  max="2"
+                  step="0.05"
+                  value={speechRate}
+                  onChange={e => {
+                    const newRate = Number(e.target.value);
+                    setSpeechRate(newRate);
+                    // If currently speaking, update rate live
+                    if (isSpeaking && speechUtteranceRef.current) {
+                      window.speechSynthesis.cancel();
+                      const utter = new window.SpeechSynthesisUtterance();
+                      const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                      utter.text = `${blog.title}. ${plainText}`;
+                      utter.lang = 'en-US';
+                      utter.rate = newRate;
+                      utter.onend = () => setIsSpeaking(false);
+                      utter.onerror = () => setIsSpeaking(false);
+                      speechUtteranceRef.current = utter;
+                      window.speechSynthesis.speak(utter);
+                    }
+                  }}
+                  className="accent-blue-600 h-2 w-32 rounded-lg appearance-none bg-gray-200 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                  aria-label="Speech speed"
+                  style={{ accentColor: '#2563eb' }}
+                />
+                <span className="text-xs text-gray-400">2x</span>
+                <span className="ml-2 text-xs font-semibold text-blue-700 dark:text-blue-300">{speechRate.toFixed(2)}x</span>
+              </div>
+            </div>
+          </div>
         </div>
         <button 
           onClick={() => window.history.back()}
