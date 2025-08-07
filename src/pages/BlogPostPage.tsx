@@ -11,6 +11,7 @@ export const BlogPostPage: React.FC = () => {
   const [blog, setBlog] = React.useState<Blog | null>(null);
   const [speechRate, setSpeechRate] = React.useState(1);
   const [isSpeaking, setIsSpeaking] = React.useState(false);
+  const [isPaused, setIsPaused] = React.useState(false);
   const speechUtteranceRef = React.useRef<SpeechSynthesisUtterance | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [notFound, setNotFound] = React.useState(false);
@@ -99,42 +100,65 @@ export const BlogPostPage: React.FC = () => {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
         {/* Text-to-Speech Controls */}
         <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
-          <div className="flex items-center gap-2 bg-white/90 dark:bg-gray-900/90 rounded-xl px-4 py-2 shadow-lg border border-blue-200 dark:border-blue-800">
-            <button
-              className={`flex items-center justify-center w-9 h-9 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${isSpeaking ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} text-white shadow`}
-              title={isSpeaking ? 'Pause reading' : 'Listen to full article'}
-              onClick={() => {
-                if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
-                  if (isSpeaking) {
+          <div className="flex flex-col items-end gap-2 bg-white/95 dark:bg-gray-900/95 rounded-2xl px-5 py-3 shadow-2xl border border-blue-200 dark:border-blue-800 min-w-[220px]">
+            <div className="flex items-center gap-3 mb-1">
+              <button
+                className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-white shadow-lg text-xl ${isSpeaking && !isPaused ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'}`}
+                title={isSpeaking ? (isPaused ? 'Resume reading' : 'Pause reading') : 'Listen to full article'}
+                onClick={() => {
+                  if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+                    if (isSpeaking && !isPaused) {
+                      window.speechSynthesis.pause();
+                      setIsPaused(true);
+                    } else if (isSpeaking && isPaused) {
+                      window.speechSynthesis.resume();
+                      setIsPaused(false);
+                    } else {
+                      const utter = new window.SpeechSynthesisUtterance();
+                      const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                      utter.text = `${blog.title}. ${plainText}`;
+                      utter.lang = 'en-US';
+                      utter.rate = speechRate;
+                      utter.onend = () => { setIsSpeaking(false); setIsPaused(false); };
+                      utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); };
+                      speechUtteranceRef.current = utter;
+                      window.speechSynthesis.cancel();
+                      window.speechSynthesis.speak(utter);
+                      setIsSpeaking(true);
+                      setIsPaused(false);
+                    }
+                  } else {
+                    alert('Sorry, your browser does not support text-to-speech.');
+                  }
+                }}
+              >
+                {isSpeaking ? (
+                  isPaused ? (
+                    <span role="img" aria-label="Resume">▶️</span>
+                  ) : (
+                    <span role="img" aria-label="Pause">⏸️</span>
+                  )
+                ) : (
+                  <span role="img" aria-label="Listen">🔊</span>
+                )}
+              </button>
+              {isSpeaking && (
+                <button
+                  className="ml-1 px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                  onClick={() => {
                     window.speechSynthesis.cancel();
                     setIsSpeaking(false);
-                  } else {
-                    const utter = new window.SpeechSynthesisUtterance();
-                    const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-                    utter.text = `${blog.title}. ${plainText}`;
-                    utter.lang = 'en-US';
-                    utter.rate = speechRate;
-                    utter.onend = () => setIsSpeaking(false);
-                    utter.onerror = () => setIsSpeaking(false);
-                    speechUtteranceRef.current = utter;
-                    window.speechSynthesis.cancel();
-                    window.speechSynthesis.speak(utter);
-                    setIsSpeaking(true);
-                  }
-                } else {
-                  alert('Sorry, your browser does not support text-to-speech.');
-                }
-              }}
-            >
-              {isSpeaking ? (
-                <span role="img" aria-label="Pause">⏸️</span>
-              ) : (
-                <span role="img" aria-label="Listen">🔊</span>
+                    setIsPaused(false);
+                  }}
+                  title="Stop reading"
+                >
+                  Stop
+                </button>
               )}
-            </button>
-            <div className="flex flex-col items-center">
-              <label htmlFor="speechRateSlider" className="text-xs text-gray-700 dark:text-gray-200 font-medium mb-1">Speech Speed</label>
-              <div className="flex items-center gap-2">
+            </div>
+            <div className="flex flex-col items-center w-full">
+              <label htmlFor="speechRateSlider" className="text-xs text-gray-700 dark:text-gray-200 font-medium mb-1 self-start">Speech Speed</label>
+              <div className="flex items-center gap-2 w-full">
                 <span className="text-xs text-gray-400">0.5x</span>
                 <input
                   id="speechRateSlider"
@@ -146,16 +170,16 @@ export const BlogPostPage: React.FC = () => {
                   onChange={e => {
                     const newRate = Number(e.target.value);
                     setSpeechRate(newRate);
-                    // If currently speaking, update rate live
-                    if (isSpeaking && speechUtteranceRef.current) {
+                    // If currently speaking, stop and restart at new rate
+                    if (isSpeaking && speechUtteranceRef.current && !isPaused) {
                       window.speechSynthesis.cancel();
                       const utter = new window.SpeechSynthesisUtterance();
                       const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
                       utter.text = `${blog.title}. ${plainText}`;
                       utter.lang = 'en-US';
                       utter.rate = newRate;
-                      utter.onend = () => setIsSpeaking(false);
-                      utter.onerror = () => setIsSpeaking(false);
+                      utter.onend = () => { setIsSpeaking(false); setIsPaused(false); };
+                      utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); };
                       speechUtteranceRef.current = utter;
                       window.speechSynthesis.speak(utter);
                     }
