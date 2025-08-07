@@ -9,89 +9,24 @@ const checkSupabase = () => {
 
 export const blogService = {
   async getPublishedBlogs() {
-    const { data: blogs, error } = await checkSupabase()
-      .from('blogs')
-      .select('*')
-      .eq('published', true)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching blogs:', error);
-      throw error;
+    // Fetch blogs from the Vercel serverless function instead of directly from Supabase
+    const response = await fetch('/api/blogs');
+    if (!response.ok) {
+      throw new Error('Failed to fetch blogs');
     }
-
-    if (!blogs || blogs.length === 0) {
-      return [];
-    }
-
-    // Fetch tags for each blog separately
-    const blogsWithTags = await Promise.all(
-      blogs.map(async (blog) => {
-        const { data: blogTags, error: tagsError } = await checkSupabase()
-          .from('blog_tags')
-          .select(`
-            tags (
-              id,
-              name,
-              slug,
-              created_at
-            )
-          `)
-          .eq('blog_id', blog.id);
-
-        if (tagsError) {
-          console.error('Error fetching tags for blog:', blog.id, tagsError);
-          return { ...blog, tags: [] };
-        }
-
-        return {
-          ...blog,
-          tags: blogTags?.map((bt: any) => bt.tags).filter(Boolean) || []
-        };
-      })
-    );
-    
-    return blogsWithTags;
+    const blogs = await response.json();
+    return blogs;
   },
 
   async getBlogBySlug(slug: string) {
-    const { data: blog, error } = await checkSupabase()
-      .from('blogs')
-      .select('*')
-      .eq('slug', slug)
-      .eq('published', true)
-      .single();
-
-    if (error) {
-      console.error('Error fetching blog by slug:', error);
-      throw error;
+    // Fetch all blogs from the Vercel serverless function and filter by slug
+    const response = await fetch('/api/blogs');
+    if (!response.ok) {
+      throw new Error('Failed to fetch blogs');
     }
-
-    if (!blog) {
-      return null;
-    }
-
-    // Fetch tags for this blog
-    const { data: blogTags, error: tagsError } = await checkSupabase()
-      .from('blog_tags')
-      .select(`
-        tags (
-          id,
-          name,
-          slug,
-          created_at
-        )
-      `)
-      .eq('blog_id', blog.id);
-
-    if (tagsError) {
-      console.error('Error fetching tags for blog:', blog.id, tagsError);
-    }
-    
-    return {
-      ...blog,
-      tags: blogTags?.map((bt: any) => bt.tags).filter(Boolean) || []
-    };
+    const blogs = await response.json();
+    const blog = blogs.find((b: any) => b.slug === slug && b.published);
+    return blog || null;
   },
 
   async getAllBlogs() {

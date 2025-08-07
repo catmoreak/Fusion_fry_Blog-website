@@ -26,7 +26,7 @@ export const CategoriesPage: React.FC = () => {
           // Create a map to count blogs per tag
           const tagCounts = new Map<string, { tag: Tag; count: number; latestDate: string }>();
           
-          blogs.forEach(blog => {
+          blogs.forEach((blog: import('../lib/supabase').Blog) => {
             if (blog.tags && blog.tags.length > 0) {
               blog.tags.forEach((tag: Tag) => {
                 const existing = tagCounts.get(tag.id);

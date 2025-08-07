@@ -1,6 +1,6 @@
 import React from 'react';
 import { blogService } from '../services/blogService';
-import { supabase } from '../lib/supabase';
+import { supabase, Blog } from '../lib/supabase';
 
 export const generateSitemap = async () => {
   const baseUrl = window.location.origin;
@@ -37,7 +37,7 @@ export const generateSitemap = async () => {
   if (supabase) {
     try {
       const blogs = await blogService.getPublishedBlogs();
-      const blogUrls = blogs.map(blog => ({
+      const blogUrls = blogs.map((blog: Blog) => ({
         loc: `${baseUrl}/blog/${blog.slug}`,
         lastmod: blog.updated_at,
         changefreq: 'monthly',

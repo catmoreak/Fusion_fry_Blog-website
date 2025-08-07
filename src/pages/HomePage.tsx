@@ -24,7 +24,7 @@ export const HomePage: React.FC = () => {
   const filteredBlogs = React.useMemo(() => {
     if (!searchQuery.trim()) return blogs;
     const q = searchQuery.toLowerCase();
-    return blogs.filter(blog =>
+    return blogs.filter((blog: Blog) =>
       blog.title?.toLowerCase().includes(q) ||
       blog.content?.toLowerCase().includes(q)
     );
@@ -48,7 +48,7 @@ export const HomePage: React.FC = () => {
           const data = await blogService.getPublishedBlogs();
           // Filter by tag if selected
           if (selectedTag) {
-            const filteredBlogs = data.filter(blog => 
+            const filteredBlogs = data.filter((blog: Blog) => 
               blog.tags?.some((tag: { slug: string }) => tag.slug === selectedTag)
             );
             setBlogs(filteredBlogs);
@@ -495,7 +495,7 @@ export const HomePage: React.FC = () => {
             </div>
           ) : filteredBlogs.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-              {filteredBlogs.map((blog) => (
+              {filteredBlogs.map((blog: Blog) => (
                 <BlogCard key={blog.id} blog={blog} />
               ))}
             </div>
