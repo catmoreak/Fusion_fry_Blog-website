@@ -9,6 +9,10 @@ import { Blog, supabase } from '../lib/supabase';
 import { Clock, Tag, X } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
+  // TTS state for pause/resume per homepage
+  const [isSpeaking, setIsSpeaking] = React.useState(false);
+  const [isPaused, setIsPaused] = React.useState(false);
+  const [currentUtterId, setCurrentUtterId] = React.useState<string | null>(null);
   // Scroll to articles section
   const handleExploreArticles = () => {
     const section = document.getElementById('articles-section');
@@ -498,25 +502,70 @@ export const HomePage: React.FC = () => {
               {filteredBlogs.map((blog: Blog) => (
                 <div key={blog.id} className="relative group">
                   <BlogCard blog={blog} />
-                  <button
-                    className="absolute top-2 right-2 z-10 bg-blue-600 text-white rounded-full p-2 shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                    title="Listen to article summary"
-                    onClick={() => {
-                      if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
-                        const utter = new window.SpeechSynthesisUtterance();
-                        // Speak title and a short intro, then a snippet of content
-                        utter.text = `${blog.title}. Article excerpt: ${(blog.content || '').replace(/\s+/g, ' ').slice(0, 220)}${blog.content && blog.content.length > 220 ? '...' : ''}`;
-                        utter.lang = 'en-US';
-                        utter.rate = 1;
-                        window.speechSynthesis.cancel();
-                        window.speechSynthesis.speak(utter);
-                      } else {
-                        alert('Sorry, your browser does not support text-to-speech.');
-                      }
-                    }}
-                  >
-                    <span role="img" aria-label="Listen">🔊</span>
-                  </button>
+                  <div className="absolute top-2 right-2 z-10 flex gap-2">
+                    <button
+                      className={`bg-blue-600 text-white rounded-full p-2 shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition`}
+                      title={isSpeaking && currentUtterId === blog.id ? (isPaused ? 'Resume reading' : 'Pause reading') : 'Listen to article summary'}
+                      onClick={() => {
+                        if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+                          const utter = new window.SpeechSynthesisUtterance();
+                          utter.text = `${blog.title}. Article excerpt: ${(blog.content || '').replace(/\s+/g, ' ').slice(0, 220)}${blog.content && blog.content.length > 220 ? '...' : ''}`;
+                          utter.lang = 'en-US';
+                          utter.rate = 1;
+                          utter.onend = () => { setIsSpeaking(false); setIsPaused(false); setCurrentUtterId(null); };
+                          utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); setCurrentUtterId(null); };
+                          window.speechSynthesis.cancel();
+                          window.speechSynthesis.speak(utter);
+                          setIsSpeaking(true);
+                          setIsPaused(false);
+                          setCurrentUtterId(blog.id);
+                        } else {
+                          alert('Sorry, your browser does not support text-to-speech.');
+                        }
+                      }}
+                    >
+                      {isSpeaking && currentUtterId === blog.id ? (
+                        isPaused ? (
+                          <span role="img" aria-label="Resume">▶️</span>
+                        ) : (
+                          <span role="img" aria-label="Pause">⏸️</span>
+                        )
+                      ) : (
+                        <span role="img" aria-label="Listen">🔊</span>
+                      )}
+                    </button>
+                    {isSpeaking && currentUtterId === blog.id && (
+                      <button
+                        className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full px-3 py-1 text-xs font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                        onClick={() => {
+                          if (isPaused) {
+                            window.speechSynthesis.resume();
+                            setIsPaused(false);
+                          } else {
+                            window.speechSynthesis.pause();
+                            setIsPaused(true);
+                          }
+                        }}
+                        title={isPaused ? 'Resume reading' : 'Pause reading'}
+                      >
+                        {isPaused ? 'Resume' : 'Pause'}
+                      </button>
+                    )}
+                    {isSpeaking && currentUtterId === blog.id && (
+                      <button
+                        className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full px-3 py-1 text-xs font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                        onClick={() => {
+                          window.speechSynthesis.cancel();
+                          setIsSpeaking(false);
+                          setIsPaused(false);
+                          setCurrentUtterId(null);
+                        }}
+                        title="Stop reading"
+                      >
+                        Stop
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

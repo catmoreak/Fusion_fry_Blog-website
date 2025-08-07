@@ -9,7 +9,7 @@ import { LazyImage } from '../components/LazyImage';
 export const BlogPostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [blog, setBlog] = React.useState<Blog | null>(null);
-  const [speechRate, setSpeechRate] = React.useState(1);
+  // Removed speechRate state (no speed control)
   const [isSpeaking, setIsSpeaking] = React.useState(false);
   const [isPaused, setIsPaused] = React.useState(false);
   const speechUtteranceRef = React.useRef<SpeechSynthesisUtterance | null>(null);
@@ -118,7 +118,7 @@ export const BlogPostPage: React.FC = () => {
                       const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
                       utter.text = `${blog.title}. ${plainText}`;
                       utter.lang = 'en-US';
-                      utter.rate = speechRate;
+                      utter.rate = 1;
                       utter.onend = () => { setIsSpeaking(false); setIsPaused(false); };
                       utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); };
                       speechUtteranceRef.current = utter;
@@ -156,42 +156,7 @@ export const BlogPostPage: React.FC = () => {
                 </button>
               )}
             </div>
-            <div className="flex flex-col items-center w-full">
-              <label htmlFor="speechRateSlider" className="text-xs text-gray-700 dark:text-gray-200 font-medium mb-1 self-start">Speech Speed</label>
-              <div className="flex items-center gap-2 w-full">
-                <span className="text-xs text-gray-400">0.5x</span>
-                <input
-                  id="speechRateSlider"
-                  type="range"
-                  min="0.5"
-                  max="2"
-                  step="0.05"
-                  value={speechRate}
-                  onChange={e => {
-                    const newRate = Number(e.target.value);
-                    setSpeechRate(newRate);
-                    // If currently speaking, stop and restart at new rate
-                    if (isSpeaking && speechUtteranceRef.current && !isPaused) {
-                      window.speechSynthesis.cancel();
-                      const utter = new window.SpeechSynthesisUtterance();
-                      const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-                      utter.text = `${blog.title}. ${plainText}`;
-                      utter.lang = 'en-US';
-                      utter.rate = newRate;
-                      utter.onend = () => { setIsSpeaking(false); setIsPaused(false); };
-                      utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); };
-                      speechUtteranceRef.current = utter;
-                      window.speechSynthesis.speak(utter);
-                    }
-                  }}
-                  className="accent-blue-600 h-2 w-32 rounded-lg appearance-none bg-gray-200 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                  aria-label="Speech speed"
-                  style={{ accentColor: '#2563eb' }}
-                />
-                <span className="text-xs text-gray-400">2x</span>
-                <span className="ml-2 text-xs font-semibold text-blue-700 dark:text-blue-300">{speechRate.toFixed(2)}x</span>
-              </div>
-            </div>
+            {/* Speed slider and label removed */}
           </div>
         </div>
         <button 
