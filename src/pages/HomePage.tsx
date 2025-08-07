@@ -526,11 +526,7 @@ export const HomePage: React.FC = () => {
                         }
                       }}
                     >
-                      {isSpeaking && currentUtterId === blog.id ? (
-                        <span role="img" aria-label="Restart">🔄</span>
-                      ) : (
-                        <span role="img" aria-label="Listen">🔊</span>
-                      )}
+                      <span role="img" aria-label="Listen">🔊</span>
                     </button>
                     {isSpeaking && currentUtterId === blog.id && (
                       <button
