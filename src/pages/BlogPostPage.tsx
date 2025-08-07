@@ -9,6 +9,7 @@ import { LazyImage } from '../components/LazyImage';
 export const BlogPostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [blog, setBlog] = React.useState<Blog | null>(null);
+  const [speechRate, setSpeechRate] = React.useState(1);
   const [loading, setLoading] = React.useState(true);
   const [notFound, setNotFound] = React.useState(false);
 
@@ -93,8 +94,44 @@ export const BlogPostPage: React.FC = () => {
         keywords={blog.tags?.map(tag => tag.name).join(', ')}
       />
 
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Back Button */}
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+        {/* Text-to-Speech Controls */}
+        <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
+          <button
+            className="bg-blue-600 text-white rounded-full p-2 shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+            title="Listen to full article"
+            onClick={() => {
+              if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+                const utter = new window.SpeechSynthesisUtterance();
+                // Remove HTML tags for speech, fallback to plain text
+                const plainText = blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                utter.text = `${blog.title}. ${plainText}`;
+                utter.lang = 'en-US';
+                utter.rate = speechRate;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utter);
+              } else {
+                alert('Sorry, your browser does not support text-to-speech.');
+              }
+            }}
+          >
+            <span role="img" aria-label="Listen">🔊</span>
+          </button>
+          <label className="flex items-center gap-2 bg-white/80 dark:bg-gray-900/80 rounded px-2 py-1 text-xs shadow border border-blue-200 dark:border-blue-800">
+            <span className="text-gray-700 dark:text-gray-200">Speed</span>
+            <input
+              type="range"
+              min="0.5"
+              max="2"
+              step="0.05"
+              value={speechRate}
+              onChange={e => setSpeechRate(Number(e.target.value))}
+              className="accent-blue-600 h-1 w-20"
+              aria-label="Speech speed"
+            />
+            <span className="w-8 text-right tabular-nums text-gray-700 dark:text-gray-200">{speechRate.toFixed(2)}x</span>
+          </label>
+        </div>
         <button 
           onClick={() => window.history.back()}
           className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-6 sm:mb-8"
