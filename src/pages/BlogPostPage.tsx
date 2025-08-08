@@ -17,9 +17,8 @@ export const BlogPostPage: React.FC = () => {
   const [notFound, setNotFound] = React.useState(false);
 
   // Like/Dislike state (local only)
-  const [likes, setLikes] = React.useState(0);
-  const [dislikes, setDislikes] = React.useState(0);
   const [userReaction, setUserReaction] = React.useState<'like' | 'dislike' | null>(null);
+  const [showThankYou, setShowThankYou] = React.useState(false);
 
   React.useEffect(() => {
     const fetchBlog = async () => {
@@ -229,41 +228,50 @@ export const BlogPostPage: React.FC = () => {
           }}
         />
 
-          {/* Like/Dislike Buttons */}
+          {/* Like/Dislike Buttons (Professional, no count, thank you popup) */}
           <div className="flex items-center gap-6 mb-8 justify-center">
             <button
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white transition-colors focus:outline-none ${userReaction === 'like' ? 'bg-green-600' : 'bg-green-500 hover:bg-green-600'}`}
+              className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold shadow-lg border border-green-600 text-green-700 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all text-base disabled:opacity-60 disabled:cursor-not-allowed`}
               onClick={() => {
-                if (userReaction === 'like') {
-                  setLikes(likes - 1);
-                  setUserReaction(null);
-                } else {
-                  setLikes(userReaction === 'dislike' ? likes + 1 : likes + 1);
-                  if (userReaction === 'dislike') setDislikes(dislikes - 1);
+                if (!userReaction) {
                   setUserReaction('like');
+                  setShowThankYou(true);
+                  setTimeout(() => setShowThankYou(false), 1800);
                 }
               }}
               aria-pressed={userReaction === 'like'}
+              disabled={!!userReaction}
+              title="Like this post"
             >
-              <span role="img" aria-label="Like">👍</span> Like {likes > 0 && <span>({likes})</span>}
+              <span className="text-xl">👍</span>
+              <span>Like</span>
             </button>
             <button
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white transition-colors focus:outline-none ${userReaction === 'dislike' ? 'bg-red-600' : 'bg-red-500 hover:bg-red-600'}`}
+              className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold shadow-lg border border-red-600 text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-all text-base disabled:opacity-60 disabled:cursor-not-allowed`}
               onClick={() => {
-                if (userReaction === 'dislike') {
-                  setDislikes(dislikes - 1);
-                  setUserReaction(null);
-                } else {
-                  setDislikes(userReaction === 'like' ? dislikes + 1 : dislikes + 1);
-                  if (userReaction === 'like') setLikes(likes - 1);
+                if (!userReaction) {
                   setUserReaction('dislike');
+                  setShowThankYou(true);
+                  setTimeout(() => setShowThankYou(false), 1800);
                 }
               }}
               aria-pressed={userReaction === 'dislike'}
+              disabled={!!userReaction}
+              title="Dislike this post"
             >
-              <span role="img" aria-label="Dislike">👎</span> Dislike {dislikes > 0 && <span>({dislikes})</span>}
+              <span className="text-xl">👎</span>
+              <span>Dislike</span>
             </button>
           </div>
+          {/* Thank You Popup */}
+          {showThankYou && (
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <div className="bg-white dark:bg-gray-900 border border-green-400 dark:border-green-700 shadow-2xl rounded-xl px-8 py-6 flex flex-col items-center animate-fade-in">
+                <span className="text-green-600 dark:text-green-400 text-3xl mb-2">✔️</span>
+                <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">Thank you for your feedback!</span>
+              </div>
+            </div>
+          )}
 
         {/* Share Section */}
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 sm:p-6 text-center">
