@@ -9,7 +9,7 @@ import { authService } from '../services/authService';
 import { blogService } from '../services/blogService';
 import { Tag } from '../lib/supabase';
 
-export const AdminBlogEditorPage: React.FC = () => {
+const AdminBlogEditorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [user, setUser] = React.useState<any>(null);
@@ -407,3 +407,5 @@ export const AdminBlogEditorPage: React.FC = () => {
     </div>
   );
 };
+
+export default AdminBlogEditorPage;

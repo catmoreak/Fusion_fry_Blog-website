@@ -6,7 +6,7 @@ import { blogService } from '../services/blogService';
 import { Blog, supabase } from '../lib/supabase';
 import { LazyImage } from '../components/LazyImage';
 
-export const BlogPostPage: React.FC = () => {
+const BlogPostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [blog, setBlog] = React.useState<Blog | null>(null);
   // Removed speechRate state (no speed control)
@@ -298,3 +298,5 @@ export const BlogPostPage: React.FC = () => {
     </div>
   );
 };
+
+export default BlogPostPage;

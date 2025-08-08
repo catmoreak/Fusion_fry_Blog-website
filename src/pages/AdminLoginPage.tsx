@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff } from 'lucide-react';
 import { authService } from '../services/authService';
 
-export const AdminLoginPage: React.FC = () => {
+const AdminLoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -125,3 +125,5 @@ export const AdminLoginPage: React.FC = () => {
     </div>
   );
 };
+
+export default AdminLoginPage;

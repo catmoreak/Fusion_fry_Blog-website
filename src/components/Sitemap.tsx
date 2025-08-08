@@ -73,3 +73,5 @@ export const SitemapGenerator: React.FC = () => {
 
   return null;
 };
+
+export default SitemapGenerator;

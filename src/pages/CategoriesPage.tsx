@@ -10,7 +10,7 @@ interface CategoryWithCount extends Tag {
   latest_blog_date?: string;
 }
 
-export const CategoriesPage: React.FC = () => {
+const CategoriesPage: React.FC = () => {
   const [categories, setCategories] = React.useState<CategoryWithCount[]>([]);
   const [loading, setLoading] = React.useState(true);
 
@@ -180,3 +180,5 @@ export const CategoriesPage: React.FC = () => {
     </div>
   );
 };
+
+export default CategoriesPage;
