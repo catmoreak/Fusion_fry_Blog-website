@@ -20,6 +20,24 @@ export const BlogPostPage: React.FC = () => {
   const [userReaction, setUserReaction] = React.useState<'like' | 'dislike' | null>(null);
   const [showThankYou, setShowThankYou] = React.useState(false);
 
+  // Persist like/dislike in localStorage per blog post
+  React.useEffect(() => {
+    if (!slug) return;
+    const stored = localStorage.getItem(`blog-reaction-${slug}`);
+    if (stored === 'like' || stored === 'dislike') {
+      setUserReaction(stored);
+    }
+  }, [slug]);
+
+  const handleReaction = (reaction: 'like' | 'dislike') => {
+    if (!userReaction && slug) {
+      setUserReaction(reaction);
+      localStorage.setItem(`blog-reaction-${slug}`, reaction);
+      setShowThankYou(true);
+      setTimeout(() => setShowThankYou(false), 1800);
+    }
+  };
+
   React.useEffect(() => {
     const fetchBlog = async () => {
       if (!slug) return;
@@ -232,13 +250,7 @@ export const BlogPostPage: React.FC = () => {
           <div className="flex items-center gap-6 mb-8 justify-center">
             <button
               className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold shadow-lg border border-green-600 text-green-700 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all text-base disabled:opacity-60 disabled:cursor-not-allowed`}
-              onClick={() => {
-                if (!userReaction) {
-                  setUserReaction('like');
-                  setShowThankYou(true);
-                  setTimeout(() => setShowThankYou(false), 1800);
-                }
-              }}
+              onClick={() => handleReaction('like')}
               aria-pressed={userReaction === 'like'}
               disabled={!!userReaction}
               title="Like this post"
@@ -248,13 +260,7 @@ export const BlogPostPage: React.FC = () => {
             </button>
             <button
               className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold shadow-lg border border-red-600 text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-all text-base disabled:opacity-60 disabled:cursor-not-allowed`}
-              onClick={() => {
-                if (!userReaction) {
-                  setUserReaction('dislike');
-                  setShowThankYou(true);
-                  setTimeout(() => setShowThankYou(false), 1800);
-                }
-              }}
+              onClick={() => handleReaction('dislike')}
               aria-pressed={userReaction === 'dislike'}
               disabled={!!userReaction}
               title="Dislike this post"
