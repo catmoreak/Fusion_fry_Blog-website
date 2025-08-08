@@ -15,6 +15,7 @@ const BlogPostPage: React.FC = () => {
   const speechUtteranceRef = React.useRef<SpeechSynthesisUtterance | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [notFound, setNotFound] = React.useState(false);
+  const [related, setRelated] = React.useState<Blog[]>([]);
 
   // Like/Dislike state (local only)
   const [userReaction, setUserReaction] = React.useState<'like' | 'dislike' | null>(null);
@@ -41,11 +42,8 @@ const BlogPostPage: React.FC = () => {
   React.useEffect(() => {
     const fetchBlog = async () => {
       if (!slug) return;
-      
       try {
-        // Check if Supabase is configured before making API calls
         if (!supabase) {
-          // No demo content - redirect to home if no Supabase
           setNotFound(true);
         } else {
           const data = await blogService.getBlogBySlug(slug);
@@ -62,9 +60,30 @@ const BlogPostPage: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchBlog();
   }, [slug]);
+
+  // Fetch related articles after blog is loaded
+  React.useEffect(() => {
+    if (!blog || !blog.tags || blog.tags.length === 0) {
+      setRelated([]);
+      return;
+    }
+    const fetchRelated = async () => {
+      try {
+        const all = await blogService.getPublishedBlogs();
+        // Find blogs with at least one tag in common, exclude current
+        const relatedBlogs = all.filter((b: Blog) =>
+          b.id !== blog.id &&
+          b.tags && b.tags.some((t: any) => (blog.tags ?? []).some((bt: any) => bt.slug === t.slug))
+        ).slice(0, 3);
+        setRelated(relatedBlogs);
+      } catch (e) {
+        setRelated([]);
+      }
+    };
+    fetchRelated();
+  }, [blog]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -305,6 +324,32 @@ const BlogPostPage: React.FC = () => {
             Share Article
           </button>
         </div>
+        {/* Related Articles */}
+        {related.length > 0 && (
+          <section className="mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
+            <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">You might also like</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {related.map(r => (
+                <div key={r.id} className="h-full">
+                  <a href={`/blog/${r.slug}`} className="block group h-full">
+                    <div className="aspect-[16/9] rounded-lg overflow-hidden mb-3">
+                      <img src={r.featured_image || 'https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=800'} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:underline mb-1">{r.title}</h3>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                      {r.tags && r.tags.length > 0 && (
+                        <span>{r.tags.map((t: any) => t.name).join(', ')}</span>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </article>
     </div>
   );
