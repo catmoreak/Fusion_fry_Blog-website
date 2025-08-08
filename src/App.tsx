@@ -1,11 +1,8 @@
-
+import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 const Header = lazy(() => import('./components/Header'));
 const Footer = lazy(() => import('./components/Footer'));
-
-
-import { Suspense, lazy } from 'react';
 const HomePage = lazy(() => import('./pages/HomePage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
