@@ -16,6 +16,11 @@ export const BlogPostPage: React.FC = () => {
   const [loading, setLoading] = React.useState(true);
   const [notFound, setNotFound] = React.useState(false);
 
+  // Like/Dislike state (local only)
+  const [likes, setLikes] = React.useState(0);
+  const [dislikes, setDislikes] = React.useState(0);
+  const [userReaction, setUserReaction] = React.useState<'like' | 'dislike' | null>(null);
+
   React.useEffect(() => {
     const fetchBlog = async () => {
       if (!slug) return;
@@ -223,6 +228,42 @@ export const BlogPostPage: React.FC = () => {
             __html: blog.content.replace(new RegExp(`<h[12][^>]*>${blog.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h[12]>`, 'gi'), '')
           }}
         />
+
+          {/* Like/Dislike Buttons */}
+          <div className="flex items-center gap-6 mb-8 justify-center">
+            <button
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white transition-colors focus:outline-none ${userReaction === 'like' ? 'bg-green-600' : 'bg-green-500 hover:bg-green-600'}`}
+              onClick={() => {
+                if (userReaction === 'like') {
+                  setLikes(likes - 1);
+                  setUserReaction(null);
+                } else {
+                  setLikes(userReaction === 'dislike' ? likes + 1 : likes + 1);
+                  if (userReaction === 'dislike') setDislikes(dislikes - 1);
+                  setUserReaction('like');
+                }
+              }}
+              aria-pressed={userReaction === 'like'}
+            >
+              <span role="img" aria-label="Like">👍</span> Like {likes > 0 && <span>({likes})</span>}
+            </button>
+            <button
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white transition-colors focus:outline-none ${userReaction === 'dislike' ? 'bg-red-600' : 'bg-red-500 hover:bg-red-600'}`}
+              onClick={() => {
+                if (userReaction === 'dislike') {
+                  setDislikes(dislikes - 1);
+                  setUserReaction(null);
+                } else {
+                  setDislikes(userReaction === 'like' ? dislikes + 1 : dislikes + 1);
+                  if (userReaction === 'like') setLikes(likes - 1);
+                  setUserReaction('dislike');
+                }
+              }}
+              aria-pressed={userReaction === 'dislike'}
+            >
+              <span role="img" aria-label="Dislike">👎</span> Dislike {dislikes > 0 && <span>({dislikes})</span>}
+            </button>
+          </div>
 
         {/* Share Section */}
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 sm:p-6 text-center">
