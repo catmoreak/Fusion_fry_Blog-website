@@ -39,7 +39,7 @@ export const Footer: React.FC = () => {
         <div className="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4 lg:mt-8 lg:pt-6 text-center">
           <div className="flex justify-center items-center gap-4 mb-2">
             <a href="/api/rss.xml" target="_blank" rel="noopener noreferrer" title="RSS Feed" className="inline-flex items-center text-orange-500 hover:text-orange-600">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="h-5 w-5 mr-1"><path d="M4.26 17.44a2.06 2.06 0 1 0 0 4.12 2.06 2.06 0 0 0 0-4.12zm-2.06 5.06A3 3 0 1 1 5.2 17.44a3 3 0 0 1-3 5.06zm5.06-1.94a1 1 0 0 1-1-1c0-5.06 4.12-9.18 9.18-9.18a1 1 0 1 1 0 2c-3.97 0-7.18 3.21-7.18 7.18a1 1 0 0 1-1 1zm0-4.12a1 1 0 0 1-1-1c0-7.18 5.82-13 13-13a1 1 0 1 1 0 2c-6.08 0-11 4.92-11 11a1 1 0 0 1-1 1z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 mr-1"><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v3.06a12.5 12.5 0 0 1 12.5 12.5h3.06C19.56 10.61 13.39 4.44 4 4.44z"/><path d="M4 10.69v3.06a6.25 6.25 0 0 1 6.25 6.25h3.06A9.31 9.31 0 0 0 4 10.69z"/></svg>
               <span className="text-xs sm:text-sm lg:text-base">RSS Feed</span>
             </a>
           </div>
