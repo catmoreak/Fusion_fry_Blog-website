@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import { Calendar, User, Tag, Share2, ArrowLeft } from 'lucide-react';
+import { Calendar, User, Tag, Share2, ArrowLeft, Clock } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { blogService } from '../services/blogService';
 import { Blog, supabase } from '../lib/supabase';
@@ -219,7 +219,7 @@ const BlogPostPage: React.FC = () => {
               <span>Admin</span>
             </div>
             <div className="flex items-center mr-4 sm:mr-6">
-              <span className="inline-flex items-center"><svg className="h-4 w-4 mr-2 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 17l4 4 4-4m-4-5v9" /></svg>{getReadingTime(blog.content)}</span>
+              <span className="inline-flex items-center"><Clock className="h-4 w-4 mr-2 text-gray-400" />{getReadingTime(blog.content)}</span>
             </div>
             <button
               onClick={handleShare}
