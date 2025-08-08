@@ -105,6 +105,14 @@ const BlogPostPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
+  // Reading time estimate (average 200 words per minute)
+  const getReadingTime = (text: string) => {
+    const plain = text.replace(/<[^>]+>/g, ' ');
+    const words = plain.trim().split(/\s+/).length;
+    const minutes = Math.max(1, Math.round(words / 200));
+    return `${minutes} min read`;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 dark:from-gray-900 dark:via-blue-900 dark:to-gray-900">
       <SEO
@@ -209,6 +217,9 @@ const BlogPostPage: React.FC = () => {
             <div className="flex items-center mr-4 sm:mr-6">
               <User className="h-4 w-4 mr-2" />
               <span>Admin</span>
+            </div>
+            <div className="flex items-center mr-4 sm:mr-6">
+              <span className="inline-flex items-center"><svg className="h-4 w-4 mr-2 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 17l4 4 4-4m-4-5v9" /></svg>{getReadingTime(blog.content)}</span>
             </div>
             <button
               onClick={handleShare}
