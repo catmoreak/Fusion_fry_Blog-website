@@ -416,7 +416,13 @@ export const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 dark:from-gray-900 dark:via-blue-900 dark:to-gray-900">
       <SEO 
-        title="FusionFry - Science and Technology Blog"
+        title={
+          searchQuery
+            ? `Search: "${searchQuery}" - FusionFry`
+            : selectedTag
+              ? `Tag: ${selectedTag} - FusionFry`
+              : 'FusionFry - Science and Technology Blog'
+        }
         description="Explore cutting-edge science and technology insights at FusionFry. Get the latest trends in AI, biotechnology, quantum computing, and scientific discoveries."
         keywords="science blog, technology news, artificial intelligence, biotechnology, quantum computing, scientific research, tech trends, innovation"
       />
