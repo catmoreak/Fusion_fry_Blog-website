@@ -13,6 +13,15 @@ interface CategoryWithCount extends Tag {
 const CategoriesPage: React.FC = () => {
   const [categories, setCategories] = React.useState<CategoryWithCount[]>([]);
   const [loading, setLoading] = React.useState(true);
+  // Pagination state
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const categoriesPerPage = 6;
+  const totalPages = Math.ceil(categories.length / categoriesPerPage);
+  const paginatedCategories = React.useMemo(() => {
+    const start = (currentPage - 1) * categoriesPerPage;
+    return categories.slice(start, start + categoriesPerPage);
+  }, [categories, currentPage]);
+  React.useEffect(() => { setCurrentPage(1); }, [categories]);
 
   React.useEffect(() => {
     const fetchCategories = async () => {
@@ -22,10 +31,8 @@ const CategoriesPage: React.FC = () => {
         } else {
           // Get all published blogs with their tags
           const blogs = await blogService.getPublishedBlogs();
-          
           // Create a map to count blogs per tag
           const tagCounts = new Map<string, { tag: Tag; count: number; latestDate: string }>();
-          
           blogs.forEach((blog: import('../lib/supabase').Blog) => {
             if (blog.tags && blog.tags.length > 0) {
               blog.tags.forEach((tag: Tag) => {
@@ -46,7 +53,6 @@ const CategoriesPage: React.FC = () => {
               });
             }
           });
-          
           // Convert to array and sort by count (descending)
           const categoriesWithCounts: CategoryWithCount[] = Array.from(tagCounts.values())
             .map(({ tag, count, latestDate }) => ({
@@ -55,7 +61,6 @@ const CategoriesPage: React.FC = () => {
               latest_blog_date: latestDate
             }))
             .sort((a, b) => b.blog_count - a.blog_count);
-          
           setCategories(categoriesWithCounts);
         }
       } catch (error) {
@@ -64,7 +69,6 @@ const CategoriesPage: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchCategories();
   }, []);
 
@@ -103,7 +107,7 @@ const CategoriesPage: React.FC = () => {
           </p>
         </div>
 
-        {categories.length === 0 ? (
+  {categories.length === 0 ? (
           <div className="text-center py-16">
             <TagIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -114,56 +118,82 @@ const CategoriesPage: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category) => (
-              <div
-                key={category.id}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group"
-              >
-                <div className="p-6">
-                  {/* Category Header */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center">
-                      <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg mr-3">
-                        <TagIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {paginatedCategories.map((category) => (
+                <div
+                  key={category.id}
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group"
+                >
+                  <div className="p-6">
+                    {/* Category Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center">
+                        <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg mr-3">
+                          <TagIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                          {category.name}
+                        </h3>
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                        {category.name}
-                      </h3>
                     </div>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      <span>
-                        {category.blog_count} {category.blog_count === 1 ? 'article' : 'articles'}
-                      </span>
-                    </div>
-                    
-                    {category.latest_blog_date && (
+                    {/* Stats */}
+                    <div className="space-y-3 mb-4">
                       <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                        <Clock className="h-4 w-4 mr-2" />
-                        <span>Latest: {formatDate(category.latest_blog_date)}</span>
+                        <BookOpen className="h-4 w-4 mr-2" />
+                        <span>
+                          {category.blog_count} {category.blog_count === 1 ? 'article' : 'articles'}
+                        </span>
                       </div>
-                    )}
+                      {category.latest_blog_date && (
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <Clock className="h-4 w-4 mr-2" />
+                          <span>Latest: {formatDate(category.latest_blog_date)}</span>
+                        </div>
+                      )}
+                    </div>
+                    {/* View Button */}
+                    <Link
+                      to={`/?tag=${category.slug}`}
+                      className="inline-flex items-center text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors text-sm"
+                    >
+                      View articles →
+                    </Link>
                   </div>
-
-                  {/* View Button */}
-                  <Link
-                    to={`/?tag=${category.slug}`}
-                    className="inline-flex items-center text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors text-sm"
-                  >
-                    View articles →
-                  </Link>
+                  {/* Hover Effect Bar */}
+                  <div className="h-1 bg-gradient-to-r from-blue-500 to-indigo-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                 </div>
-
-                {/* Hover Effect Bar */}
-                <div className="h-1 bg-gradient-to-r from-blue-500 to-indigo-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              ))}
+            </div>
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-8 gap-2">
+                <button
+                  className="px-3 py-1 rounded border bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 disabled:opacity-50"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i + 1}
+                    className={`px-3 py-1 rounded border ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200'}`}
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  className="px-3 py-1 rounded border bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 disabled:opacity-50"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
 
         {/* Back to Home */}

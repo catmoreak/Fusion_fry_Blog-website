@@ -4,6 +4,7 @@ import { Calendar, User, Tag, Share2, ArrowLeft, Clock } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { blogService } from '../services/blogService';
 import { Blog, supabase } from '../lib/supabase';
+// Pagination component for related articles
 import { LazyImage } from '../components/LazyImage';
 
 const BlogPostPage: React.FC = () => {
@@ -326,33 +327,78 @@ const BlogPostPage: React.FC = () => {
         </div>
         {/* Related Articles */}
         {related.length > 0 && (
-          <section className="mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
-            <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">You might also like</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {related.map(r => (
-                <div key={r.id} className="h-full">
-                  <a href={`/blog/${r.slug}`} className="block group h-full">
-                    <div className="aspect-[16/9] rounded-lg overflow-hidden mb-3">
-                      <img src={r.featured_image || 'https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=800'} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:underline mb-1">{r.title}</h3>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                      {r.tags && r.tags.length > 0 && (
-                        <span>{r.tags.map((t: any) => t.name).join(', ')}</span>
-                      )}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                    </div>
-                  </a>
-                </div>
-              ))}
-            </div>
-          </section>
+          <RelatedArticlesPagination related={related} />
         )}
+// Pagination component for related articles
       </article>
     </div>
   );
 };
 
+
 export default BlogPostPage;
+
+// Pagination component for related articles
+type RelatedArticlesPaginationProps = { related: Blog[] };
+function RelatedArticlesPagination({ related }: RelatedArticlesPaginationProps) {
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const perPage = 3;
+  const totalPages = Math.ceil(related.length / perPage);
+  const paginated = React.useMemo(() => {
+    const start = (currentPage - 1) * perPage;
+    return related.slice(start, start + perPage);
+  }, [related, currentPage]);
+  React.useEffect(() => { setCurrentPage(1); }, [related]);
+  return (
+    <section className="mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
+      <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">You might also like</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {paginated.map(r => (
+          <div key={r.id} className="h-full">
+            <a href={`/blog/${r.slug}`} className="block group h-full">
+              <div className="aspect-[16/9] rounded-lg overflow-hidden mb-3">
+                <img src={r.featured_image || 'https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=800'} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:underline mb-1">{r.title}</h3>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                {r.tags && r.tags.length > 0 && (
+                  <span>{r.tags.map((t: any) => t.name).join(', ')}</span>
+                )}
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+              </div>
+            </a>
+          </div>
+        ))}
+      </div>
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 gap-2">
+          <button
+            className="px-3 py-1 rounded border bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 disabled:opacity-50"
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              className={`px-3 py-1 rounded border ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200'}`}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            className="px-3 py-1 rounded border bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 disabled:opacity-50"
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
