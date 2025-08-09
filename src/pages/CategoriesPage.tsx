@@ -13,6 +13,7 @@ interface CategoryWithCount extends Tag {
 const CategoriesPage: React.FC = () => {
   const [categories, setCategories] = React.useState<CategoryWithCount[]>([]);
   const [loading, setLoading] = React.useState(true);
+
   // Pagination state
   const [currentPage, setCurrentPage] = React.useState(1);
   const categoriesPerPage = 6;
