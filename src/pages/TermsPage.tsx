@@ -3,7 +3,7 @@ import { SEO } from '../components/SEO';
 
 export const TermsPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-100 via-primary-200 to-primary-300 dark:from-gray-900 dark:via-primary-900 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 dark:from-gray-900 dark:via-blue-900 dark:to-gray-900">
       <SEO 
         title="Terms and Conditions - FusionFry"
         description="Terms and conditions for using FusionFry website."
@@ -161,16 +161,16 @@ export const TermsPage: React.FC = () => {
               </p>
             </section>
 
-            <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg p-6 mt-8">
-              <h3 className="text-lg font-semibold text-primary-900 dark:text-primary-100 mb-2">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mt-8">
+              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
                 Questions about our Terms?
               </h3>
-              <p className="text-primary-800 dark:text-primary-200 mb-4">
+              <p className="text-blue-800 dark:text-blue-200 mb-4">
                 We're here to help clarify any questions you may have about these terms and conditions.
               </p>
               <a 
                 href="/contact" 
-                className="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-sm"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
               >
                 Contact Us
               </a>
