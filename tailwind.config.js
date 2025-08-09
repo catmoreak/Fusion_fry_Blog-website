@@ -6,17 +6,28 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-        }
+          50: '#eafff0',
+          100: '#b8ffcc',
+          200: '#7dff99',
+          300: '#39ff5a',
+          400: '#00ff1a',
+          500: '#00ff66', // Neon green
+          600: '#00e65c',
+          700: '#00b347',
+          800: '#008f39',
+          900: '#006626',
+        },
+        // Optionally override blue utility classes for neon green
+        'blue-50': '#eafff0',
+        'blue-100': '#b8ffcc',
+        'blue-200': '#7dff99',
+        'blue-300': '#39ff5a',
+        'blue-400': '#00ff1a',
+        'blue-500': '#00ff66',
+        'blue-600': '#00ff66',
+        'blue-700': '#00b347',
+        'blue-800': '#008f39',
+        'blue-900': '#006626',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

@@ -3,7 +3,7 @@ import { SEO } from '../components/SEO';
 
 export const PrivacyPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 dark:from-gray-900 dark:via-blue-900 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-primary-100 via-primary-200 to-primary-300 dark:from-gray-900 dark:via-primary-900 dark:to-gray-900">
       <SEO 
         title="Privacy Policy - FusionFry"
         description="Privacy policy for FusionFry website. Learn how we collect, use, and protect your personal information."
@@ -60,8 +60,8 @@ export const PrivacyPage: React.FC = () => {
               <ul className="list-disc pl-6 mb-4 space-y-2">
                 <li>Google may use cookies to serve ads based on your prior visits to our website</li>
                 <li>Google's use of advertising cookies enables it to serve ads based on your visits to our site and other sites on the Internet</li>
-                <li>You can opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-blue-600 hover:text-blue-700">Google's Ads Settings</a></li>
-                <li>You can also opt out through the <a href="http://www.aboutads.info/choices/" className="text-blue-600 hover:text-blue-700">Digital Advertising Alliance opt-out page</a></li>
+                <li>You can opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-primary-600 hover:text-primary-700">Google's Ads Settings</a></li>
+                <li>You can also opt out through the <a href="http://www.aboutads.info/choices/" className="text-primary-600 hover:text-primary-700">Digital Advertising Alliance opt-out page</a></li>
               </ul>
               
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Third-Party Ad Networks</h3>
@@ -143,16 +143,16 @@ export const PrivacyPage: React.FC = () => {
               </p>
             </section>
             </section>
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mt-8">
-              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+            <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg p-6 mt-8">
+              <h3 className="text-lg font-semibold text-primary-900 dark:text-primary-100 mb-2">
                 Questions about your privacy?
               </h3>
-              <p className="text-blue-800 dark:text-blue-200 mb-4">
+              <p className="text-primary-800 dark:text-primary-200 mb-4">
                 We're committed to protecting your privacy and being transparent about our data practices.
               </p>
               <a 
                 href="/contact" 
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                className="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-sm"
               >
                 Contact Us
               </a>
