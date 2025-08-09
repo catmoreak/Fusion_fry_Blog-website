@@ -4,7 +4,7 @@ import { Calendar, User, Tag, Share2, ArrowLeft, Clock } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { blogService } from '../services/blogService';
 import { Blog, supabase } from '../lib/supabase';
-// Pagination component for related articles
+
 import { LazyImage } from '../components/LazyImage';
 
 const BlogPostPage: React.FC = () => {
