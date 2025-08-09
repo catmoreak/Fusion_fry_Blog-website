@@ -10,7 +10,7 @@ import { LazyImage } from '../components/LazyImage';
 const BlogPostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [blog, setBlog] = React.useState<Blog | null>(null);
-  // Removed speechRate state (no speed control)
+
   const [isSpeaking, setIsSpeaking] = React.useState(false);
   const [isPaused, setIsPaused] = React.useState(false);
   const speechUtteranceRef = React.useRef<SpeechSynthesisUtterance | null>(null);
@@ -18,11 +18,11 @@ const BlogPostPage: React.FC = () => {
   const [notFound, setNotFound] = React.useState(false);
   const [related, setRelated] = React.useState<Blog[]>([]);
 
-  // Like/Dislike state (local only)
+
   const [userReaction, setUserReaction] = React.useState<'like' | 'dislike' | null>(null);
   const [showThankYou, setShowThankYou] = React.useState(false);
 
-  // Persist like/dislike in localStorage per blog post
+ 
   React.useEffect(() => {
     if (!slug) return;
     const stored = localStorage.getItem(`blog-reaction-${slug}`);
@@ -227,7 +227,7 @@ const BlogPostPage: React.FC = () => {
           </div>
         )}
 
-        {/* Article Header */}
+     
         <header className="mb-6 sm:mb-8">
           <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-4">
             <div className="flex items-center mr-4 sm:mr-6">
@@ -329,7 +329,7 @@ const BlogPostPage: React.FC = () => {
         {related.length > 0 && (
           <RelatedArticlesPagination related={related} />
         )}
-// Pagination component for related articles
+
       </article>
     </div>
   );
