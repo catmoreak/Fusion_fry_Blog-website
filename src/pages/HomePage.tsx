@@ -514,18 +514,30 @@ export const HomePage: React.FC = () => {
                           utter.text = `${blog.title}. Article excerpt: ${(blog.content || '').replace(/\s+/g, ' ').slice(0, 220)}${blog.content && blog.content.length > 220 ? '...' : ''}`;
                           utter.lang = 'en-US';
                           utter.rate = 1;
-                          // Select a female voice if available
+                          // Improved female voice selection: prioritize high-quality and common female voices
                           const voices = window.speechSynthesis.getVoices();
-                          const femaleVoice =
-                            voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female'))
-                            || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('woman'))
-                            || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('girl'))
-                            || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('zira'))
-                            || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('susan'))
-                            || voices.find(v => v.lang.startsWith('en'));
+                          // List of common high-quality female voice names (Chrome, Edge, Windows, macOS)
+                          const preferredFemaleNames = [
+                            'zira', 'susan', 'samantha', 'karen', 'joanna', 'lisa', 'olivia', 'emma', 'victoria', 'moira', 'fiona', 'tessa', 'allison', 'zoe', 'lucy', 'mia', 'amy', 'eva', 'en-us', 'female'
+                          ];
+                          let femaleVoice = null;
+                          for (const name of preferredFemaleNames) {
+                            femaleVoice = voices.find(v => v.lang.toLowerCase().startsWith('en') && v.name.toLowerCase().includes(name));
+                            if (femaleVoice) break;
+                          }
+                          // Fallback: any English voice with a name that sounds female
+                          if (!femaleVoice) {
+                            femaleVoice = voices.find(v => v.lang.toLowerCase().startsWith('en') && (/female|woman|girl/.test(v.name.toLowerCase())));
+                          }
+                          // Final fallback: any English voice
+                          if (!femaleVoice) {
+                            femaleVoice = voices.find(v => v.lang.toLowerCase().startsWith('en'));
+                          }
                           if (femaleVoice) {
                             utter.voice = femaleVoice;
                           }
+                          // Optionally, you can adjust pitch for a more feminine sound
+                          utter.pitch = 1.2;
                           utter.onend = () => { setIsSpeaking(false); setIsPaused(false); setCurrentUtterId(null); utterRef.current = null; };
                           utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); setCurrentUtterId(null); utterRef.current = null; };
                           utterRef.current = utter;
