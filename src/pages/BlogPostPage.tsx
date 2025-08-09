@@ -169,6 +169,18 @@ const BlogPostPage: React.FC = () => {
                     utter.text = `${blog.title}. ${plainText}`;
                     utter.lang = 'en-US';
                     utter.rate = 1;
+                    // Select a female voice if available
+                    const voices = window.speechSynthesis.getVoices();
+                    const femaleVoice =
+                      voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female'))
+                      || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('woman'))
+                      || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('girl'))
+                      || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('zira'))
+                      || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('susan'))
+                      || voices.find(v => v.lang.startsWith('en'));
+                    if (femaleVoice) {
+                      utter.voice = femaleVoice;
+                    }
                     utter.onend = () => { setIsSpeaking(false); setIsPaused(false); };
                     utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); };
                     speechUtteranceRef.current = utter;

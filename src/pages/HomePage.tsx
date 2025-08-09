@@ -514,6 +514,18 @@ export const HomePage: React.FC = () => {
                           utter.text = `${blog.title}. Article excerpt: ${(blog.content || '').replace(/\s+/g, ' ').slice(0, 220)}${blog.content && blog.content.length > 220 ? '...' : ''}`;
                           utter.lang = 'en-US';
                           utter.rate = 1;
+                          // Select a female voice if available
+                          const voices = window.speechSynthesis.getVoices();
+                          const femaleVoice =
+                            voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female'))
+                            || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('woman'))
+                            || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('girl'))
+                            || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('zira'))
+                            || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('susan'))
+                            || voices.find(v => v.lang.startsWith('en'));
+                          if (femaleVoice) {
+                            utter.voice = femaleVoice;
+                          }
                           utter.onend = () => { setIsSpeaking(false); setIsPaused(false); setCurrentUtterId(null); utterRef.current = null; };
                           utter.onerror = () => { setIsSpeaking(false); setIsPaused(false); setCurrentUtterId(null); utterRef.current = null; };
                           utterRef.current = utter;
